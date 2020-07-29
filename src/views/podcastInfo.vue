@@ -1,16 +1,15 @@
 <template>
-    <v-app style="background-color: #FAFAFA" >
-        <v-content light>
-            <v-container fluid>
+
+            <v-container fluid >
+
                 <v-card outlined class="pa-2 mt-5" height="100%">
                 <div  class="d-flex justify-space-between align-stretch" style="border-style: none;width: 100%">
-                    <v-avatar tile size="350" class="flex-shrink-1" style="align-self: center">
+                    <v-avatar tile size="250" class="flex-shrink-1" style="align-self: center">
                         <v-img
-                                :src="feed.itunes.image"
+                                :src="podcast.image"
                                 class="bkg">
                         </v-img>
                     </v-avatar>
-
 
                     <div style="border-style: none;" class="flex-grow-1 d-flex align-start flex-column">
                         <div style="border-style: none" class="mb-auto flex-grow-1">
@@ -19,112 +18,103 @@
                         </v-card-title>
 
                         <v-card-subtitle class="mt-0 mb-0 py-0">
-                            <strong>{{feed.itunes.categories.toString() }} | {{this.numberWithSpaces(feed.items.length)}} épisode{{feed.items.length>1?'s':''}} </strong>
-
+                            <strong> {{this.podcast.categories.join(' | ')}}  </strong>
                         </v-card-subtitle>
                             <v-card-subtitle class="mt-0 mb-0 py-0">
+                                <strong>{{this.numberWithSpaces(podcast.nbEpisodes)}} épisode{{podcast.nbEpisodes>1?'s':''}} </strong>
+                            </v-card-subtitle>
+                            <v-card-subtitle class="mt-0 mb-0 py-0">
                             <strong></strong>
-                            {{feed.itunes.owner.name}}
+                            {{podcast.editor}}
                         </v-card-subtitle>
                         </div>
 
                         <div class="d-flex flex-column" style="border-style: none" >
                             <div class="d-flex justify-start ml-3">
-                            <v-card  style="height: 100%" class="pa-2"    color="#52489C"  outlined >
+                            <v-card  style="height: 100%" class="pa-2"    color="#00796b"  outlined >
                                 <div style="text-align: center;border-style: none;color: white"> Tarif indicatif </div>
-                                <div style="text-align: center;font-size: 18px;color:white">{{numberWithSpaces(podcast.price)}} €/ <span>  CPM </span></div>
+                                <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.price)}} €/ <span>  CPM </span></div>
                             </v-card>
 
-                            <v-card  class="ml-4 pa-2"  color="#52489C"  c outlined x-large>
+                            <v-card  class="ml-4 pa-2"  color="secondary"  c outlined x-large>
                                 <div style="text-align: center;border-style: none;font-size: 16px;color: white"> Ecoutes </div>
-                                <div style="text-align: center;font-size: 18px;color:white">{{numberWithSpaces(podcast.nbPlays)}}/Mois</div>
+                                <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.nbPlays)}}/Mois</div>
                             </v-card>
                             </div>
 
                             <div class="d-flex mt-12">
                                 <v-chip v-for="(tag,index) in podcast.tags" class="ml-2"  :key="index" label small light  color="grey lighten-2">
-                                    {{tag.name}} <v-icon small>mdi-tag</v-icon>
+                                    {{tag}} <v-icon small>mdi-tag</v-icon>
                                 </v-chip>
                             </div>
 
                         </div>
                     </div>
-                    <v-card-actions class="d-flex flex-column">
-                        <v-btn color="#4062BB" class="mb-5" dark width="300"  height="50" >
-                            Proposer une campagne
+                    <div v-if="isOwner" class="d-flex flex-column align-start">
+                        <v-btn color="primary" class="mb-5" dark width="300"  height="50" :to="'/announcer/requestcampaign/'+podcast.id">
+                            Demander une campagne
                         </v-btn>
-                    <v-btn color="#E9C46A" dark width="300"  height="50">
+                    <v-btn color="secondary" dark width="300"  height="50">
                         <v-icon>
                             mdi-star
                         </v-icon>
                         ajouter à mes favoris
                     </v-btn>
-                    </v-card-actions>
+                    </div>
 
 
 
                 </div>
                 </v-card>
 
-                <div class="d-flex mt-5 ">
+                <div class="d-flex mt-2 ">
 
-                    <v-card  class="flex-shrink-0 pa-2" style="width: 30%">
+                    <v-card outlined class="flex-shrink-0 pa-2" style="width: 30%">
                         <v-card-title class="pa-O ma-0">
                             Audience
                         </v-card-title>
-
-                        <v-range-slider
-                                class="ml-4 mt-2"
-                                style="width: 80%"
-                                color="#4062BB"
-                        readonly
-                        v-model="podcast.ageInterval"
-                        min="0"
-                        man="100"
-                        thumb-size="23"
-                        thumb-label="always"
-                        label="Âge"
-                        >
-                        </v-range-slider>
-                        <div class="ml-2">
-                        <v-label  color="blue"> Genre </v-label>
-                        <v-icon x-large color="#4062BB" class="ml-3"> fa-mars</v-icon>
-                        <v-icon x-large color="#4062BB" class="ml-2"> fa-venus</v-icon>
-                        </div>
                         <div class="ml-2 mt-2">
-                        <v-label>Centre d'intrêts</v-label>
-                            <v-chip small v-for="(interest,index) in podcast.interests" :key="index" class="ml-2"> {{interest}} </v-chip>
+                            <v-label  color="blue"> Âge </v-label>
+                            <v-chip small v-for="(ageGroup,index) in podcast.ageGroup" :key="index" class="ml-2"> {{ageGroup}} </v-chip>
                         </div>
+
+                        <div class="ml-2 mt-2">
+                            <v-label  color="blue"> Genre </v-label>
+                            <v-chip small class="ml-2"> {{podcast.targetGender}} </v-chip>
+                        </div>
+
+                        <div class="ml-2 mt-2">
+                            <v-label  color="blue"> Catégories </v-label>
+                            <v-chip small v-for="(category,index) in podcast.categories" :key="index" class="ml-2"> {{category}} </v-chip>
+                        </div>
+
                         <div class="ml-2 mt-2">
                         <v-label>Localisation</v-label>
                         <v-chip small v-for="(city,index) in podcast.city" :key="index" class="ml-2"> {{city}} </v-chip>
                             <v-chip small v-for="(country,index) in podcast.country" :key="index" class="ml-2"> {{country}} </v-chip>
-
                         </div>
                     </v-card>
 
-
-                <v-card class=" ml-5 d-flex align-center" >
-
-                    <v-card-text class="align-center">
-                        A propos du podcast :
-                        <br>
-                        <br>
-                        {{feed.itunes.summary}}
-                    </v-card-text>
+                <v-card outlined class=" ml-5 d-flex align-center"  width="100%">
+                    <div class="align-center">
+                        <v-card-title>Description</v-card-title>
+                        <v-card-text class="align-center">
+                        <span v-html="podcast.description" ></span>
+                        </v-card-text>
+                    </div>
 
                 </v-card>
                 </div>
 
-                <v-card class="mt-5 pa-2" >
+                <v-card v-if="!loading" outlined class="mt-2 px-2" >
                     <v-card-title>
                         Derniers épisodes
                     </v-card-title>
-                    <div class="d">
+                    <div v-if="!loading" class="d">
                     <v-card flat  v-for="(item,index) in feed.items" :key="index">
                         <v-scroll-y-transition>
-                        <v-card class="pa-2 d-flex align-center mb-2" outlined elevation="2" v-if="index<slice">
-                        <v-avatar size="200" tile>
+                        <v-card outlined  class="pa-2 d-flex align-center mb-2"  v-if="index<slice">
+                        <v-avatar size="150" tile>
                             <v-img :src="item.itunes.image">
                             </v-img>
                         </v-avatar>
@@ -133,7 +123,7 @@
                                 {{item.title}}
                             </v-card-title>
                         <v-card-text>
-                            {{item.itunes.subtitle+item}}
+                            {{item.itunes.subtitle}}
                         </v-card-text>
                             <audio class="ml-3" controls style="width:90%">
                                 <source :src="item.enclosure.url" type="audio/mpeg">
@@ -155,8 +145,6 @@
 
                 </v-card>
             </v-container>
-        </v-content>
-    </v-app>
 </template>
 
 <script>
@@ -171,10 +159,10 @@
         data() {
             return {
                 podcast:{},
+                loading:true,
                 slice:3,
                 feed:{},
                 episodesList: [],
-                genre:['Actualité','Art','Culture','Productivité','Shopping','Sciences/Technologies','Sports','Société'],
                 menu:false,
                 modifyStats:false,
                 refreshRunning:false,
@@ -189,7 +177,6 @@
                 date:'',
                 dialog:false,
                 maxValue:0,
-                loading:false,
                 display:false,
                 modify:false,
                 //Initializing Primary Y Axis
@@ -229,12 +216,12 @@
             },
             isOwner()
             {
-                if(this.$store.userid == this.podcastData.author.id){
-                    return true
+                if(this.$store.state.userid == this.podcast.author.id){
+                    return false
                 }
                 else
                 {
-                    return false
+                    return true
                 }
             },
             primaryXAxis() {
@@ -312,9 +299,12 @@
             {
                 this.modify=true
             },
-            modifyStatsdia()
+            async parseFeed()
             {
-                this.modifyStats=!this.modifyStats
+                let Parser = require('rss-parser');
+                let parser = new Parser();
+                this.feed =  await parser.parseURL('https://cors-anywhere.herokuapp.com/'+this.podcast.urlFeed);
+                this.loading= false
             },
             async checkLoading(){
                 while(this.podcastData.episodesLoadingStatus=='Started')
@@ -367,16 +357,9 @@
             }
         },
         async created(){
-
             this.podcast= await this.$store.dispatch('getPodcast',{'id':[this.$route.params.id]})
-            let Parser = require('rss-parser');
-            let parser = new Parser();
-            this.feed = await parser.parseURL('https://cors-anywhere.herokuapp.com/'+this.podcast.urlFeed);
-            this.podcast.name = this.feed.title
-            this.podcast.nbEpisodes = this.feed.items.length
-            this.podcast.description = this.feed.description
-
-        }
+            this.parseFeed()
+        },
     }
 </script>
 
@@ -389,6 +372,22 @@
         align-items: center;
         border-style: solid;
         background-color: salmon;
+    }
+    .lds-roller {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 40px 40px;
+    }
+    .lds-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 7px;
     }
 
 </style>

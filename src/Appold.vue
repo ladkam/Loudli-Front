@@ -6,7 +6,7 @@
             </v-toolbar-title>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
             <v-item-group v-if="$store.state.profileType=='podcaster'"  class="hidden-xs-only">
-                <v-btn  text v-if="$store.state.token" to="/podcaster/dashboard/" >
+                <v-btn  text v-if="$store.state.token" to="/dashboard/" >
                     Dashboard
                 </v-btn>
                 <v-btn  text v-if="$store.state.token" to="/podcaster/podcasts/" >
@@ -37,7 +37,7 @@
                         Blog
                     </v-btn>
                     <v-btn  text v-if="$store.state.token"    @click="logout"> Déconnexion </v-btn>
-                    <v-btn  text v-if="!$store.state.token" to="/podcaster/Login/"> Connexion </v-btn>
+                    <v-btn  text v-if="!$store.state.token" to="/login/"> Connexion </v-btn>
             </v-item-group>
         </v-app-bar>
 
@@ -53,7 +53,7 @@
                 <v-list-item-title text>Menu</v-list-item-title>
                 <v-divider></v-divider>
                 <v-list-item-group v-if="$store.state.profileType=='podcaster'" >
-                    <v-list-item  text v-if="$store.state.token" to="/podcaster/dashboard/" >
+                    <v-list-item  text v-if="$store.state.token" to="/dashboard/" >
                         Dashboard
                     </v-list-item>
                     <v-list-item  text v-if="$store.state.token" to="/podcaster/podcasts/" >
@@ -67,7 +67,7 @@
                     <v-list-item   text to="/FAQ/"> Aide ? </v-list-item>
                     <v-list-item text @click="redirectBlog"> Blog </v-list-item>
                     <v-list-item  text v-if="$store.state.token"    @click="logout"> Déconnexion </v-list-item>
-                    <v-list-item  text v-if="!$store.state.token" to="/podcaster/login/"> Connexion </v-list-item>
+                    <v-list-item  text v-if="!$store.state.token" to="/login/"> Connexion </v-list-item>
                 </v-list-item-group>
             </v-list>
         </v-navigation-drawer>
@@ -99,7 +99,7 @@
                 },
                 logout() {
                     this.$store.dispatch('logout')
-                    this.$router.push('/podcaster/Login/')
+                    this.$router.push('/login/')
                 }
             }
     }

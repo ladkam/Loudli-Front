@@ -229,7 +229,7 @@
                 let response = await this.$store.dispatch('register',payload)
                 if(response=='registration ok'){
                     this.$store.dispatch('logout')
-                    this.$router.push('/podcaster/login/')
+                    this.$router.push('/login/')
                 }
             },
             setPicture(picture){

@@ -6,7 +6,7 @@
             </v-toolbar-title>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
             <v-item-group v-if="$store.state.profileType=='podcaster'"  class="hidden-xs-only">
-                <v-btn  text v-if="$store.state.token" to="/podcaster/dashboard/" >
+                <v-btn  text v-if="$store.state.token" to="/dashboard/" >
                     Dashboard
                 </v-btn>
                 <v-btn  text v-if="$store.state.token" to="/podcaster/podcasts/" >

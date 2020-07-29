@@ -1,37 +1,37 @@
 <template>
-    <v-app style="background-color: #FAFAFA" >
-        <v-container>
-            <v-content>
-                <v-card flat>
-                    <v-container>
+        <v-container  height="100%">
+                <v-card flat style="width: 1000px">
                         <v-stepper v-model="step">
                             <v-stepper-header>
-                            <v-stepper-step editable step="1">
+                            <v-stepper-step  step="1">
                                 Ajouter mon podcast
                                 <small> Ajout du Flux RSS</small>
                             </v-stepper-step>
                                 <v-divider></v-divider>
 
-                                <v-stepper-step editable step="2">
+                                <v-stepper-step  step="2">
                                     Audiences
                                     <small> Genre, Interêts, localisation...</small>
                                 </v-stepper-step >
                                 <v-divider></v-divider>
-                            <v-stepper-step editable step="4">
-                                écoutes
-                                <small>
-                                    Suivi des écoutes
-                                </small>
+                            <v-stepper-step  step="3">
+                                écoutes & Tarifs
                             </v-stepper-step>
                             </v-stepper-header>
                             <v-stepper-content step="1">
                                 <v-card-text class="ml-0" v-if="!rssParsed"> Renseignez l'adresse du flux RSS de cotre Podcast</v-card-text>
                                 <v-alert v-if="this.rssParsedOk" color="blue" border="left" dismissible text > nous avons trouvé les informations suivante sur votre podcast, pour modifier le flux cliquer <span class="v-btn"   text @click="rssParsedOk=false"> ici </span></v-alert>
-
-                                <div class="d-flex reverse justify-end" >
-                                    <v-btn v-if="this.rssParsedOk" color="primary" @click="step=step+1"> C'est mon podcast </v-btn>
-                                </div>
-                                <div v-if="!this.rssParsedOk" class="d-inline-flex mt-2">
+                                <v-alert
+                                        v-if="alertIncorrect"
+                                        color="red"
+                                        dark
+                                        close-label="false"
+                                        dismissible
+                                        class="ml-4 mr-4"
+                                >
+                                    Le lien RSS est incorrect ou existe déjà. Si c'est le veuillez contacter le support support@loudli.com.
+                                </v-alert>
+                                <div v-if="!this.rssParsedOk">
                                     <v-text-field type="url"
                                                   class="ml-2 mr-4 mb-2"
                                                   outlined
@@ -41,16 +41,15 @@
                                                   label="flux RSS"
                                                   hide-details>
                                     </v-text-field>
-                                    <v-btn color="primary" @click="parseRSS"> Import </v-btn>
+                                    <v-btn color="primary" class="ml-2" @click="parseRSS" style="height: 30px;align-self: end" > Importer </v-btn>
                                 </div>
                                 <div class="ml-2"><small v-if="loadingRSS"> analyse votre flux rss en cours ... <v-progress-circular color="blue" indeterminate></v-progress-circular> </small></div>
-
                                 <v-scroll-x-transition>
                                     <v-sheet v-if="this.rssParsedOk">
                                         <div v-if="this.rssParsedOk" class="d-flex justify-space-between" style="border-style: none;width: 100%">
                                             <v-avatar tile size="400" class="flex-shrink-1" style="align-self: center">
                                                 <v-img
-                                                        :src="feed.itunes.image"
+                                                        :src="this.podcast.image"
                                                         class="bkg">
                                                 </v-img>
                                             </v-avatar>
@@ -59,19 +58,21 @@
                                                     {{podcast.name}}
                                                 </v-card-title>
                                                 <v-card-subtitle class="mt-0 mb-0 py-0">
-                                                    <strong>Nombre d'épisodes:</strong> {{feed.items.length}}
+                                                    <strong>Nombre d'épisodes:</strong> {{podcast.nbEpisodes}}
                                                 </v-card-subtitle>
                                                 <v-card-subtitle class="mt-0 mb-0 py-0">
+<!--
                                                     <strong>Date dernier épisode:</strong> {{feed.items[feed.items.length-1].pubDate}}
+-->
                                                 </v-card-subtitle>
                                                 <v-card-subtitle class="mt-0 mb-0 py-0">
-                                                    <strong>Catégorie:</strong>
-                                                    {{feed.itunes.categories.toString() }} </v-card-subtitle>
+                                                    <strong>Catégories itunes:</strong>
+                                                    {{podcast.categories.toString() }} </v-card-subtitle>
                                                 <v-card-subtitle class="mt-0 mb-0 py-0">
                                                     <strong>Par:</strong>
-                                                    {{feed.itunes.owner.name}}
+                                                    {{podcast.editor}}
                                                 </v-card-subtitle>
-                                                <!--<v-card-subtitle> <strong>Tags</strong>: <v-span v-for="(word,index) in feed.itunes.keywords" :key="index" label>
+<!--                                                <v-card-subtitle> <strong>Tags</strong>: <v-span v-for="(word,index) in feed.itunes.keywords" :key="index" label>
 
                                                     {{word}},
 
@@ -80,144 +81,159 @@
                                                 <v-card-subtitle> <strong> Description </strong></v-card-subtitle>
                                                 <v-card-text
                                                         class="ml-2 mr-4">
-                                                    {{feed.description}}
+                                                    {{this.podcast.description}}
+
                                                 </v-card-text>
                                             </div>
                                         </div>
-
+                                        <div class="d-flex reverse justify-end" >
+                                            <v-btn v-if="this.rssParsedOk" color="primary" @click="step=2"> C'est mon podcast </v-btn>
+                                        </div>
                                     </v-sheet>
+
                                 </v-scroll-x-transition>
 
                             </v-stepper-content>
 
                             <v-stepper-content step=2>
 
-                                <v-card-title> Ecoutes </v-card-title>
-
-                                <v-card-text>
-                                    Nous avons besoin d'avoir une indication sur votre nombre d'écoutes par mois.Cette indication sera validée par notre équipe.
-                                </v-card-text>
-
-                                <v-text-field outlined
-                                              class="mt-2 ml-3"
-                                              style="width:20rem"
-                                              label="écoutes par mois"
-                                              placeholder="ex 10000"
-                                              type="number"
-                                              min="0"
-                                              hide-details
-                                              v-model="podcast.nbPlays"
-                                              hint="cette information est disponible sur la platform qui host votre podcast"
-                                >
-                                </v-text-field>
-
-                                <v-card-title> Tarif </v-card-title>
-
-                                <v-card-text>
-                                    Il s'agit du tarif de la diffusion de l'annonce.
-                                </v-card-text>
-
-                                <v-text-field
-                                        style="width:20rem"
-                                        type="number"
-                                        min="0"
-                                        class="mt-2 ml-3"
-                                        outlined
-                                        label="Tarif par millier d'écoutes"
-                                        placeholder="votre tarif HT"
-                                        hide-details
-                                        v-model="podcast.price"
-                                >
-                                </v-text-field>
-                                <small v-if="podcast.nbPlays & podcast.nbPlays"> à ce tarif une annonce diffusé sur un podcast pour un mois donnera {{podcast.nbPlays*podcast.nbPlays/1000}}€</small>
-
-
-                                <v-card-title> Audience </v-card-title>
+                                <v-card-title color="primary"> Audience </v-card-title>
 
                                 <v-card-text>
                                     Le type d'audience de votre podcast est une information très importante pour les annonceurs, c'est avec elle qu'ils choissent les podcasts sur lesquels faire leurs annonces.
                                 </v-card-text>
 
-                                <h6 class="ml-3"> Genre </h6>
-                                <v-card-text >
-                                    Mon audience c'est surtout des :
-                                </v-card-text>
-                                <div class="mt-2 mb-5">
-                                    <label for="hommes"><input type="radio" id="hommes" class="ml-3" value="homme" v-model="podcast.genre"> Homme</label>
-                                    <label for="femmes"><input type="radio" class="ml-3"  id="femmes" value="femme" v-model="podcast.genre"> Femme </label>
-                                    <label for="both"><input type="radio" class="ml-3"  id="both" value="autre" v-model="podcast.genre"> Les deux </label>
+                                <h6 class="ml-3 mb-5"> Genre </h6>
 
-                                </div>
+                                <v-btn-toggle
+                                        v-model="podcast.targetGender"
+                                        color="primary"
+                                        class="ml-3 mb-3"
+                                >
+                                    <v-btn :value="1" text>
+                                        Femmes
+                                        <v-icon>fa-venus</v-icon>
+                                    </v-btn>
+
+                                    <v-btn :value="0" text>
+                                        Hommes
+                                        <v-icon>fa-mars</v-icon>
+                                    </v-btn>
+
+                                    <v-btn :value="2" text>
+                                        autre
+                                        <v-icon>fa-interogation</v-icon>
+                                    </v-btn>
+                                    <v-btn :value="3" text>
+                                        tous
+                                    </v-btn>
+                                </v-btn-toggle>
+
+                                <h6 class="ml-3 mb-5"> Âge</h6>
+                                <v-btn-toggle
+                                        v-model="podcast.ageGroup"
+                                        color="primary"
+                                        class="ml-3 mb-3"
+                                        multiple
+                                >
+                                    <v-btn v-for="(ageGroup,index) in ageGroups" :key="index" :value="ageGroup.name" text>
+                                        {{ageGroup.name}}
+                                    </v-btn>
+                                </v-btn-toggle>
 
 
-                                <h6 class="ml-3"> Âge</h6>
-                                <v-card-text class="pl-0 ml-3 ">l'âge de mon audimat c'est plutôt</v-card-text>
-                                <v-range-slider
-                                        style="width: 30%"
-                                        v-model="podcast.ageInterval"
-                                        thumb-label="always"
-                                        thumb-size="25"
-                                        min="0"
-                                        max="100"
-                                        class="ml-3 mt-5"
-                                ></v-range-slider>
-
-                                <h6 class="ml-3"> Localisation </h6>
-                                <v-card-text class="pl-0 ml-3"> Ils habitents généralement en </v-card-text>
+                                <h6 class="ml-3 mb-5"> Localisation </h6>
                                 <v-autocomplete
                                         label="Pays"
                                         hide-details
                                         style="width: 40%;"
-                                        deletable-chips
-                                        chips
-                                        dense
-                                        class="mt-2 ml-3"
+                                        class="mt-2 ml-3 mb-5"
                                         outlined
                                         :items="countries"
-                                        item-value="id"
+                                        item-value="name"
                                         item-text="name"
                                         v-model="podcast.country"
-                                        multiple
-                                >
+                                        multiple>
+
+
+                                    <template v-slot:selection="data">
+                                        <v-chip
+                                                close
+                                                :key="JSON.stringify(data.item)"
+                                                v-bind="data.attrs"
+                                                :input-value="data.selected"
+                                                :disabled="data.disabled"
+                                                color="primary"
+                                                text-color="white"
+                                                @click:close="data.parent.selectItem(data.item)"
+                                        >
+                                            {{ data.item.name }}
+                                        </v-chip>
+                                        </template>
                                 </v-autocomplete>
+
+
+
                                 <v-autocomplete
-                                        class=" ml-3 mt-2"
+                                        label="city"
                                         hide-details
-                                        dense
-                                        style="width: 40%"
-                                        deletable-chips
-                                        chips
+                                        style="width: 40%;"
+                                        class="mt-2 ml-3 mb-5"
                                         outlined
-                                        label="Villes"
                                         :items="cities"
-                                        item-value="id"
+                                        item-value="name"
                                         item-text="name"
                                         v-model="podcast.city"
                                         multiple
                                 >
+
+                                    <template v-slot:selection="data">
+                                        <v-chip
+                                                close
+                                                :key="JSON.stringify(data.item)"
+                                                v-bind="data.attrs"
+                                                :input-value="data.selected"
+                                                :disabled="data.disabled"
+                                                color="primary"
+                                                text-color="white"
+                                                @click:close="data.parent.selectItem(data.item)"
+                                        >
+                                            {{ data.item.name }}
+                                        </v-chip>
+                                    </template>
                                 </v-autocomplete>
 
                                 <h6 class="ml-3 mt-5"> Interêts </h6>
-
-                                <v-card-text class="pl-0 mt-2 ml-3"> Leurs centres d'interêt sont: </v-card-text>
                                 <v-autocomplete
                                         hide-details
                                         style="width: 40%;"
-                                        deletable-chips
                                         outlined
-                                        dense
-                                        label="centre d'interêt"
-                                        :items="interests"
-                                        class="mb-4 mt-2 ml-3"
-                                        item-value="id"
-                                        item-text="name"
-                                        v-model="podcast.interests"
+                                        label="Catégories"
+                                        :items="Cats"
+                                        class="mt-2 ml-3 mb-5"
+                                        item-value="Name"
+                                        item-text="NameFR"
+                                        v-model="podcast.categories"
                                         multiple
                                 >
+                                    <template v-slot:selection="data">
+                                        <v-chip
+                                                close
+                                                :key="JSON.stringify(data.item)"
+                                                v-bind="data.attrs"
+                                                :input-value="data.selected"
+                                                :disabled="data.disabled"
+                                                color="primary"
+                                                text-color="white"
+                                                @click:close="data.parent.selectItem(data.item)"
+                                        >
+                                            {{ data.item.NameFR }}
+                                        </v-chip>
+                                    </template>
                                 </v-autocomplete>
 
+                                <h6 class="ml-3 mb-5"> Tags </h6>
 
-                                <v-card-text class="pl-0 mt-2 ml-3"> Voulez-vous ajouter des tags? </v-card-text>
                                 <v-combobox
                                         v-model="selectedTags"
                                         class="mt-2 ml-3"
@@ -231,7 +247,7 @@
                                         hide-selected
                                         label="Chercher ou créer un tag"
                                         multiple
-                                        dense
+                                        
                                         small-chips
                                 >
                                     <template v-slot:no-data>
@@ -297,25 +313,64 @@
                                 </v-combobox>
 
                                 <div class="d-flex justify-end">
-                                <v-btn @click="createPodcast" color="primary">Créer mon podcast!</v-btn>
+                                    <v-btn @click="step=1" color="purple" class="white--text mr-2" > Précédent </v-btn>
+                                    <v-btn @click="step=3" color="primary"> Suivant </v-btn>
                                 </div>
 
                             </v-stepper-content >
+                            <v-stepper-content step="3">
+                                <v-card-title> Ecoutes </v-card-title>
+                                <v-card-text>
+                                    Nous avons besoin d'avoir une indication sur votre nombre d'écoutes par mois.Cette indication sera validée par notre équipe.
+                                </v-card-text>
 
+                                <v-text-field outlined
+                                              class="mt-2 ml-3"
+                                              style="width:20rem"
+                                              label="écoutes par mois"
+                                              placeholder="ex 10000"
+                                              type="number"
+                                              min="0"
+                                              hide-details
+                                              v-model="podcast.nbPlays"
+                                              hint="cette information est disponible sur la platform qui host votre podcast"
+                                >
+                                </v-text-field>
+                                <v-card-title> Tarif </v-card-title>
 
+                                <v-card-text>
+                                    Il s'agit du tarif de la diffusion de l'annonce.
+                                </v-card-text>
+
+                                <v-text-field
+                                        style="width:20rem"
+                                        type="number"
+                                        min="0"
+                                        class="mt-2 ml-3"
+                                        outlined
+                                        label="Tarif par millier d'écoutes"
+                                        placeholder="votre tarif HT"
+                                        hide-details
+                                        v-model="podcast.price"
+                                >
+                                </v-text-field>
+                                <small v-if="podcast.nbPlays & podcast.nbPlays"> à ce tarif une annonce diffusé sur un podcast pour un mois donnera {{podcast.nbPlays*podcast.nbPlays/1000}}€</small>
+                                <div class="d-flex justify-end">
+                                    <v-btn @click="step=2" color="purple" class="mr-2 white--text"> Précédent </v-btn>
+                                    <v-btn @click="createPodcast" color="primary">Monétisez mon podcast!</v-btn>
+                                </div>
+                            </v-stepper-content>
                         </v-stepper>
-                    </v-container>
                 </v-card>
-            </v-content>
         </v-container>
-    </v-app>
 </template>
-
 
 <script>
 /*
     import ImagePreview from "@/components/ImagePreview";
 */
+
+import Cats from '@/static/Cats.json'
     import {axioslistennotes} from "@/store";
     var _ = require('lodash');
 
@@ -323,6 +378,10 @@
         data() {
             return {
                 step:1,
+                ageGroups:[],
+                selected:false,
+                Cats:Cats,
+                alertIncorrect : false,
                 rssParsedOk:false,
                 tags:[{ 'header': 'Chercher un tag ou tapper pour en un nouveau' }],
                 cities:[],
@@ -367,22 +426,47 @@
                 loading:false,
                 podcastSelected:'',
                 podcast: {
+                    subcategories:[],
                     name: '',
-                    genre:[],
+                    image:'',
+                    nbEpisodes:0,
+                    targetGender:0,
                     interests:[],
                     tags:[],
                     urlFeed:[],
                     country:[],
                     city:[],
                     ageInterval:[0,100],
+                    ageGroup:[],
                     nbPlays:0,
+                    categories:[],
                     price:0,
                 }
-
             };
         },
 
         computed: {
+            subcat() {
+                var value = this.Cats.map(function (el) {
+                    var name = el.Name
+                    const sub = el.list
+                    let header = [{header:name}]
+                    let result=[]
+                    result.push(header)
+                    if(sub) {
+                        let subcats = sub.map(
+                            function (subEl) {
+                                return {name: subEl, group: name}
+                            }
+                        )
+                        result.push(subcats)
+                    }
+                    return result
+                }
+                )
+                console.log(value.flat())
+                return value.flat(2)
+            },
             rssParsed(){
                 return !_.isEmpty(this.feed)
             },
@@ -391,11 +475,9 @@
             },
             defaultImage() {
                 if (_.isEmpty(this.feed)) {
-                    console.log(this.feed)
                     return require('../../../assets/default_podcast.jpg')
                 } else {
-                    console
-                    return this.feed.image.url
+                    return this.podcast.image
 /*
                     return this.feed.image.url
 */
@@ -443,6 +525,10 @@
         },
 
         methods: {
+            remove (item) {
+                const index = this.podcast.subcategories.indexOf(item.name)
+                if (index >= 0) this.podcast.subcategories.splice(index, 1)
+            },
             edit(index, item) {
                 if (!this.editing) {
                     this.editing = item
@@ -497,18 +583,24 @@
             },
             async parseRSS()
                 {
-                    let Parser = require('rss-parser');
-                    let parser = new Parser();
                     this.loadingRSS=true
-                    this.feed = await parser.parseURL('https://cors-anywhere.herokuapp.com/'+this.podcast.urlFeed);
+                    this.feed = await this.$store.dispatch('getPodcastRssInfo',{url:this.podcast.urlFeed,type:'check'});
+                    if (this.feed=='failed') {
+                        this.alertIncorrect = true
+                        this.loadingRSS=false
+                    }
+                    else
+                    {
                     this.loadingRSS=false
-                    this.podcast.name = this.feed.title
-                    this.podcast.image=this.feed.itunes.image
-                    this.podcast.nbEpisodes = this.feed.items.length
-                    this.podcast.description = this.feed.description
+                    this.podcast.name = this.feed.name
+                    this.podcast.categories=this.feed.category
+                    this.podcast.image=this.feed.image
+                    this.podcast.nbEpisodes = this.feed.length
+                    this.podcast.description = this.feed.summary
+                    this.podcast.editor=this.feed.author
                     this.rssParsedOk = true
-                    let Vib = require('node-vibrant')
-                    Vib.from('https://cors-anywhere.herokuapp.com/'+this.feed.image.url).getPalette((err, palette) => this.background = palette.LightVibrant.getHex())
+
+                    }
             },
             extractId(payload){
                 if(payload)
@@ -530,11 +622,13 @@
                     return result
                 }},
 
-            createPodcast(){
+            async createPodcast(){
                 let payload = this.podcast
                 payload['author']=this.$store.state.userid
                 payload['tags'] = this.extractName(this.selectedTags)
-                this.$store.dispatch('createPodcast',this.podcast);
+                let id=await this.$store.dispatch('createPodcast',this.podcast);
+                this.$router.push('/podcast/'+id.toString())
+
 
             },
             load(){
@@ -555,6 +649,7 @@
             this.cities = await this.$store.dispatch("getCities")
             this.countries = await this.$store.dispatch("getCountries")
             this.interests = await this.$store.dispatch("getInterests")
+            this.ageGroups = await this.$store.dispatch("getAgeGroup")
             let importedTags = await this.$store.dispatch("getTags")
             this.tags=this.tags.concat(importedTags)
         }

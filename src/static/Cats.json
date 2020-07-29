@@ -1,0 +1,25 @@
+[
+{"Name":"Arts","NameFR":"Arts","list":["Books","Design","Fashion & Beauty","Fashion Food","Fashion Performing Arts","Fashion Visual Arts"]},
+{"Name":"Business","NameFR":"Business","list" :["Careers","Entrepreneurship","Investing","Management","Marketing","Non-Profit"]},
+{"Name":"Comedy","NameFR":"Comedie","list" :["Comedy Interviews","Improv","Stand-Up"]},
+{"Name":"Education","NameFR":"Education", "list" :["Courses","How To","Language Learning","Self-Improvement"]},
+{"Name":"Fiction","NameFR":"Fiction", "list"  :["Comedy Fiction","Drama","Science Fiction"]},
+{"Name":"Government","NameFR":"Gouvernement"},
+{"Name":"History","NameFR":"Histoire"},
+{"Name":"Health & Fitness","NameFR":"Santé et Fitness","list" :["Alternative Health","Fitness","Medicine","Mental Health","Nutrition","Sexuality"]},
+{"Name":"Kids & Family","NameFR":"Enfants & Famille","list":["Education for Kids","Parenting","Pets & Animals","Stories for Kids"]},
+{"Name":"Leisure","NameFR":"Loisirs","list" : ["Animation & Manga","Automotive","Aviation","Crafts","Games","Hobbies","Home & Garden","Video Games"]},
+{"Name":"Music","NameFR":"Musique","list" :["Music Commentary","Music History","Music Interviews"]},
+{"Name":"News","NameFR":"Actualité","list": ["Business News","Daily News","Entertainment News","News Commentary","Politics","Sports News","Tech News"]},
+{"Name":"Religion & Spirituality","NameFR":"Religions et spirtualité","list" :["Buddhism","Christianity","Hinduism","Islam","Judaism","Religion","Spirituality"]},
+{"Name":"Science","NameFR":"Science","list" :["Astronomy","Chemistry","Earth Sciences","Life Sciences","Mathematics","Natural Sciences","Nature","Physics","Social Sciences"]},
+{"Name":"Society & Culture","NameFR":"Société et Culture","list" :[ "Documentary","Personal Journals","Philosophy","Places & Travel","Relationships"]},
+{"Name":"Sports","NameFR":"Sports","list":[ "Baseball","Basketball","Cricket","Fantasy Sports","Football","Golf","Hockey","Rugby","Running","Soccer","Swimming","Tennis","Volleyball","Wilderness","Wrestling"]},
+{"Name":"Technology","NameFR":"Technologies"},
+{"Name":"True Crime","NameFR":"Crimes"},
+{"Name":"TV & Film","NameFR":"Télévision & Cinéma","list":["After Shows","Film History","Film Interviews","Film Reviews","TV Reviews"]}
+]
+
+
+
+

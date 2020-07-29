@@ -1,267 +1,167 @@
 <template>
-    <v-app style="background-color: #FAFAFA" >
-        <v-content light>
-            <v-container fluid>
-                <v-card flat outlined>
-                    <v-container>
-                        <v-row wrap width="100%" class="ml-2">
-                        <h2> {{podcastData.name}}
-                            <v-btn
-                                    v-if="isOwner"
-                                left
-                                flat
-                                text
-                                @click="dia"
-                                class="justify-start">
-                            <v-icon>mdi-pencil</v-icon></v-btn></h2>
-                            <v-spacer></v-spacer>
-                            <v-btn text align="center"
-                                   @click="$router.push('/requestcompaign/'+$route.params.id)">
-                                <v-icon align="center">mdi-plus</v-icon>
-                                Start a compaign
-                                <v-icon>mdi-bullhorn</v-icon>
+
+            <v-container fluid >
+                <v-card outlined  class="pa-2" >
+                    <div  class="d-flex justify-space-between align-stretch" style="border-style: none;width: 100%">
+                        <v-avatar tile size="350" class="flex-shrink-1" style="align-self: center">
+                            <v-img
+                                    :src="podcast.image"
+                                    class="bkg">
+                            </v-img>
+                        </v-avatar>
+
+                        <div style="border-style: none;" class="flex-grow-1 d-flex align-start flex-column">
+                            <div style="border-style: none" class="mb-auto flex-grow-1">
+                                <v-card-title class="mt-0 mb-0 py-0 flex-grow">
+                                    {{podcast.name}}
+                                </v-card-title>
+
+                                <v-card-subtitle class="mt-0 mb-0 py-0">
+                                    <strong> {{this.podcast.categories.join(' | ')}}  </strong>
+                                </v-card-subtitle>
+                                <v-card-subtitle class="mt-0 mb-0 py-0">
+                                    <strong>{{this.numberWithSpaces(podcast.nbEpisodes)}} épisode{{podcast.nbEpisodes>1?'s':''}} </strong>
+                                </v-card-subtitle>
+                                <v-card-subtitle class="mt-0 mb-0 py-0">
+                                    <strong></strong>
+                                    {{podcast.editor}}
+                                </v-card-subtitle>
+                            </div>
+
+                            <div class="d-flex flex-column" style="border-style: none" >
+                                <div class="d-flex justify-start ml-3">
+                                    <v-card  style="height: 100%" class="pa-2"    color="#00796b"  outlined >
+                                        <div style="text-align: center;border-style: none;color: white"> Tarif indicatif </div>
+                                        <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.price)}} €/ <span>  CPM </span></div>
+                                    </v-card>
+
+                                    <v-card  class="ml-4 pa-2"  color="secondary"  c outlined x-large>
+                                        <div style="text-align: center;border-style: none;font-size: 16px;color: white"> Ecoutes </div>
+                                        <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.nbPlays)}}/Mois</div>
+                                    </v-card>
+                                </div>
+
+                                <div class="d-flex mt-12">
+                                    <v-chip v-for="(tag,index) in podcast.tags" class="ml-2"  :key="index" label small light  color="grey lighten-2">
+                                        {{tag}} <v-icon small>mdi-tag</v-icon>
+                                    </v-chip>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div v-if="isOwner" class="d-flex flex-column align-start">
+
+                            <v-btn color="secondary" dark width="300"  height="50">
+                                <v-icon>
+                                    mdi-star
+                                </v-icon>
+                                ajouter à mes favoris
                             </v-btn>
-                        </v-row>
-                            <v-row  cols="12" style="border-style: none" class="flex-row-reverse justify-end"  >
-                            <v-col sm="10" md="3" >
-                                <v-img
-                                        :src="podcastData.podcastPicture ?podcastData.podcastPicture:podcastData.thumbnail"
-                                        style="border-style: none;"
-                                        class="mt-0"
-                                >
-                                </v-img>
-                            </v-col>
-                            <v-col style="border-style: none;" sm="12" md="9" width="300">
-                                <v-dialog
-                                        v-model="modify"
-                                        max-width="400"
-                                >
-                                    <v-card>
-                                        <v-card-title> Editer podcast </v-card-title>
-                                        <v-form>
-                                            <v-text-field outlined
-                                                          label="Nom"
-                                                          v-model="podcastData.name"
-                                                          class="mr-4 ml-4"
-                                            >
-                                            </v-text-field>
-                                            <v-text-field regular outlined label="Durée" v-model="podcastData.duration" type="number" class="ml-4 mr-4 styled-input"></v-text-field>
-                                            <v-select regular
-                                                      label="Genre"
-                                                      v-model="podcastData.genre"
-                                                      :items="genre"
-                                                      outlined
-                                                      class="ml-4 mr-4">
-                                            </v-select>
-                                            <v-textarea regular
-                                                        outlined
-                                                        style="border-style: none"
-                                                        v-model="podcastData.about"
-                                                        class="ml-4 mr-4"
-                                                        label="Description">
-                                            </v-textarea>
-                                        </v-form>
-                                        <v-card-actions>
-                                            <v-btn
-                                                    color="orange darken-1"
-                                                    text
-                                                    @click="updatePodcast"
-                                            >Modifier</v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
-                                <v-card-subtitle style="border-style: none;" >Genre: {{podcastData.genre}}</v-card-subtitle>
-                                <v-card-subtitle style="border-style: none;" >Durée: {{ podcastData.duration}} minutes</v-card-subtitle>
-                                <v-card-subtitle style="border-style: none;" >Description: </v-card-subtitle>
-                                <v-card-text style="border-style: none;" width="100%" >{{podcastData.about}}</v-card-text>
-                            </v-col>
-                        </v-row>
-                    </v-container>
+                        </div>
+
+
+
+                    </div>
                 </v-card>
-                <v-row cols="12">
-                    <v-col sm="12">
-                        <v-card outlined
-                                class="mt-1 mx-auto"
-                                min-height="400"
-                                flat
-                        >
-                            <v-row cols="12"
-                                   class="mt-2 ml-2 mr-2 mb-2 mx-auto">
-                                <v-col md="7" sm="12" align="center">
-                                    <v-card style="height: 100%"
-                                            flat
-                                            outlined
-                                            height="400"
-                                    >
-                                        <v-row justify="space-between" class="ml-2 mr-2">
-                                        <v-card-title> Données d'écoutes:</v-card-title>
-                                            <v-item-group>
-                                            <v-btn
-                                                    v-if="isOwner"
-                                                    text
-                                                    @click="dia"
-                                                    class="justify-start">
-                                                <v-icon>mdi-pencil</v-icon></v-btn>
-                                            <v-btn
-                                                    v-if="isOwner"
-                                                    text
-                                                    @click="modifyStatsdia"
-                                                    class="justify-start">
-                                                <v-icon>mdi-refresh</v-icon></v-btn>
-                                            </v-item-group>
-                                            <v-spacer></v-spacer>
-                                        </v-row>
-                                        <v-alert
-                                                color="blue lighten-0"
-                                                dark
-                                                class="ml-4 mr-4 pa-0 pb-0 pr-3 pl-3"
-                                                height="5%"
-                                                style="text-wrap: normal"
-                                                v-if="refreshRunning"
-                                                dismissible
-                                        >
-                                            Le chargement de votre podcast en cours.
-                                        </v-alert>
-                                        <v-dialog style="border-style: solid;border-color: red" content-class="dial"
-                                                v-model="modifyStats"
-                                                  max-width="600"
-                                                  scrollable="false"
-                                                  width="unset"
-                                        >
-                                            <app-HosterLogin style="border-style: solid;" class="pa-0 pl-0" :podcastId = "podcastData.id"
-                                                             v-on:childToParent="updatePodcastStats"
-                                            ></app-HosterLogin>
-                                        </v-dialog>
-                                        <ejs-chart v-if="podcastStat.length>0" id="container" :primaryXAxis='primaryXAxis' :title="title" :primaryYAxis='primaryYAxis'  :tooltip='tooltip' :chartArea="chartArea" >
-                                            <e-series-collection>
-                                                <e-series :dataSource='podcastStat' type='Line' fill='#0275d8'  xName='x' yName='y' name='Ecoutes'  :marker='marker'> </e-series>
-                                            </e-series-collection>
-                                        </ejs-chart>
-                                        <v-div                                                     v-else-if="podcastData.episodesLoadingStatus=='Started'"
-                                        >
-                                            <v-progress-circular
-                                                    :size="300"
-                                                    align="center"
-                                                    color="primary"
-                                                    indeterminate
-                                                    style="height: 50%;"
-                                            ></v-progress-circular>
-                                        <v-row wrap align="center" justify="center"><v-card-subtitle>Chargement de données en cours, cela peut prendre quelques minutes </v-card-subtitle></v-row>
-                                        </v-div>
+
+                <div class="d-flex mt-5 ">
+
+                    <v-card  class="flex-shrink-0 pa-2" style="width: 30%">
+                        <v-card-title class="pa-O ma-0">
+                            Audience
+                        </v-card-title>
+                        <div class="ml-2 mt-2">
+                            <v-label  color="blue"> Âge </v-label>
+                            <v-chip small v-for="(ageGroup,index) in podcast.ageGroup" :key="index" class="ml-2"> {{ageGroup}} </v-chip>
+                        </div>
+
+                        <div class="ml-2 mt-2">
+                            <v-label  color="blue"> Genre </v-label>
+                            <v-chip small class="ml-2"> {{podcast.targetGender}} </v-chip>
+                        </div>
+
+                        <div class="ml-2 mt-2">
+                            <v-label  color="blue"> Interêts </v-label>
+                            <v-chip small v-for="(category,index) in podcast.categories" :key="index" class="ml-2"> {{category}} </v-chip>
+                        </div>
+
+                        <div class="ml-2 mt-2">
+                            <v-label>Localisation</v-label>
+                            <v-chip small v-for="(city,index) in podcast.city" :key="index" class="ml-2"> {{city}} </v-chip>
+                            <v-chip small v-for="(country,index) in podcast.country" :key="index" class="ml-2"> {{country}} </v-chip>
+
+                        </div>
+                    </v-card>
 
 
+                    <v-card class=" ml-5 d-flex align-center" style="width: 100%" >
 
-                                        <v-card-text v-else class="align-content-center">
-                                            pas de données d'écoute sur ce podcast
+                        <v-card-text class="align-center">
+                            A propos du podcast :
+                            <br>
+                            <br>
+                            {{podcast.description}}
+                        </v-card-text>
+
+                    </v-card>
+                </div>
+
+               <!-- <v-card v-if="!loading" class="mt-5 pa-2" >
+                    <v-card-title>
+                        Derniers épisodes
+                    </v-card-title>
+                    <div v-if="!loading" class="d">
+                        <v-card flat  v-for="(item,index) in feed.items" :key="index">
+                            <v-scroll-y-transition>
+                                <v-card class="pa-2 d-flex align-center mb-2" outlined elevation="2" v-if="index<slice">
+                                    <v-avatar size="200" tile>
+                                        <v-img :src="item.itunes.image">
+                                        </v-img>
+                                    </v-avatar>
+                                    <div>
+                                        <v-card-title>
+                                            {{item.title}}
+                                        </v-card-title>
+                                        <v-card-text>
+                                            {{item.itunes.subtitle+item}}
                                         </v-card-text>
-                                    </v-card>
-                                </v-col>
-                                <v-col md="5" sm="12" style="border-style: none">
-                                    <v-card
-                                            flat
-                                            outlined
-                                            min-height="400">
-                                        <v-card-title class="text-center"> Derniers episodes</v-card-title>
-                                        <aplayer autoplay
-                                                 v-if="episodesList.length>0"
-                                                 theme="pic"
-                                                 :music="{
-                                    title: episodesList[0].title,
-                                    src: episodesList[0].src,
-                                    pic: episodesList[0].pic
-                                }"
-                                                 :list="episodesList"
-                                        />
-                                        <div v-else>
-                                            <v-card-subtitle class="text-center"> pas d'épisodes à afficher <v-fab-transition>
+                                        <audio class="ml-3" controls style="width:90%">
+                                            <source :src="item.enclosure.url" type="audio/mpeg">
+                                        </audio>
 
-                                            </v-fab-transition></v-card-subtitle>
-                                        </div>
-                                        <div align="center">
-                                            <v-card-subtitle>
-                                                <v-btn
-                                                        small
-                                                        elevation="0"
-                                                        @click="dialog=true"
-                                                        color="white"
-                                                >
-                                                    <v-icon>mdi-plus</v-icon>
-                                                    ajouter un épisode
-                                                </v-btn>
-                                            </v-card-subtitle>
-                                            <v-dialog
-                                                    v-model="dialog"
-                                                    max-width="400"
-                                            >
-                                                <v-container>
-                                                    <v-card>
-                                                        <v-card-title class="headline">Ajouter un episode</v-card-title>
-                                                        <v-form>
-                                                            <v-text-field class="ml-4 mr-4" outlined label="Titre de l'épisode" v-model="newEpisode.title"></v-text-field>
-                                                            <v-text-field class="ml-4 mr-4" outlined label="lien audio" type="url" v-model="newEpisode.audio"></v-text-field>
-                                                            <v-menu
-                                                                    ref="menu"
-                                                                    label="Date de publication"
-                                                                    v-model="menu"
-                                                                    :close-on-content-click="false"
-                                                                    :return-value.sync="newEpisode.date"
-                                                                    transition="scale-transition"
-                                                                    offset-y
-                                                                    min-width="290px"
-                                                                    outlined
-                                                                    class="ml-4 mr-4"
-                                                            >
-                                                                <template v-slot:activator="{ on }">
-                                                                    <v-text-field
-                                                                            v-model="newEpisode.date"
-                                                                            label="Date de publication"
-                                                                            readonly
-                                                                            v-on="on"
-                                                                            outlined
-                                                                            class="mr-4 ml-4"
-                                                                    ></v-text-field>
-
-                                                                </template>
-                                                                <v-date-picker v-model="newEpisode.date" no-title scrollable>
-                                                                    <v-spacer></v-spacer>
-                                                                    <v-btn text color="primary" @click="$refs.menu.save(newEpisode.date)">OK</v-btn>
-                                                                </v-date-picker>
-                                                            </v-menu>                                   </v-form>
-
-                                                        <v-card-actions>
-                                                            <v-spacer></v-spacer>
-
-                                                            <v-btn
-                                                                    @click="addEpisode"
-                                                                    color="success"
-                                                            >
-                                                                <v-icon>plus-mdi</v-icon>
-                                                                Ajouter
-                                                            </v-btn>
-                                                        </v-card-actions>
-                                                    </v-card>
-                                                </v-container>
-                                            </v-dialog>
-                                        </div>
-                                    </v-card>
-                                </v-col>
-                            </v-row>
+                                    </div>
+                                </v-card>
+                            </v-scroll-y-transition>
                         </v-card>
-                    </v-col>
-                </v-row>
+                        <div class=" d-flex justify-center">
+                        <span class="text-center display-5"  @click="slice=slice+3" v-if="slice<feed.items.length">
+                            Plus <v-icon> mdi-chevron-down</v-icon>
+                        </span>
+                            <span class="text-center display-5" style="pointer-events: stroke "  @click="slice=slice-3" v-if="slice>3">
+                            Moins <v-icon> mdi-chevron-up</v-icon>
+                        </span>
+                        </div>
+                    </div>
+
+                </v-card>-->
             </v-container>
-        </v-content>
-    </v-app>
 </template>
 
 <script>
-    import Aplayer from 'vue-aplayer'
+    /*
+        import Aplayer from 'vue-aplayer'
+    */
     import { LineSeries, DateTime,DataLabel,Tooltip } from "@syncfusion/ej2-vue-charts";
-    import podcastHosterLogin from "@/components/podcastHosterLogin";
+    /*
+        import podcastHosterLogin from "@/components/podcastHosterLogin";
+    */
     export default {
         data() {
             return {
-                podcastData:{},
+                podcast:{},
+                loading:true,
+                slice:3,
+                feed:{},
                 episodesList: [],
                 genre:['Actualité','Art','Culture','Productivité','Shopping','Sciences/Technologies','Sports','Société'],
                 menu:false,
@@ -278,7 +178,6 @@
                 date:'',
                 dialog:false,
                 maxValue:0,
-                loading:false,
                 display:false,
                 modify:false,
                 //Initializing Primary Y Axis
@@ -318,12 +217,12 @@
             },
             isOwner()
             {
-                if(this.$store.userid == this.podcastData.author.id){
-                    return true
+                if(this.$store.state.userid == this.podcast.author.id){
+                    return false
                 }
                 else
                 {
-                    return false
+                    return true
                 }
             },
             primaryXAxis() {
@@ -338,8 +237,12 @@
             },
         },
         components: {
-            'aplayer':Aplayer,
-            'app-HosterLogin':podcastHosterLogin
+            /*
+                            VuetifyAudio: () => import('vuetify-audio'),
+            */
+            /*
+                        'app-HosterLogin':podcastHosterLogin
+            */
         },
         provide: {
             chart: [LineSeries, DateTime,DataLabel,Tooltip]
@@ -374,7 +277,12 @@
                 }
             }
         },
+        props:['podcastId'],
+
         methods:{
+            numberWithSpaces(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            },
             async updatePodcast()
             {
                 await this.$store.dispatch('updatePodcast',this.podcastData)
@@ -386,7 +294,7 @@
                 let formatted_date = date.getDate()+'/'+(date.getMonth() + 1) + "/" + date.getFullYear()
                 return formatted_date;
             },
-             sleep(ms) {
+            sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             },
 
@@ -394,9 +302,12 @@
             {
                 this.modify=true
             },
-            modifyStatsdia()
+            async parseFeed()
             {
-                this.modifyStats=!this.modifyStats
+                let Parser = require('rss-parser');
+                let parser = new Parser();
+                this.feed =  await parser.parseURL('https://cors-anywhere.herokuapp.com/'+this.podcast.urlFeed);
+                this.loading= false
             },
             async checkLoading(){
                 while(this.podcastData.episodesLoadingStatus=='Started')
@@ -448,15 +359,10 @@
                 this.episodesList.push(episodeTemp.map(function(el) {return {title:el.title,pic:el.image,src:el.audio,artist:el.pub_date.split('T')[0],theme:'pic'}}))
             }
         },
-        props:['podcastId'],
         async created(){
-
-            this.podcastData= await this.$store.dispatch('getPodcast',{'id':[this.podcastId]})
-            let episodeTemp =await this.$store.dispatch('getPodcastEpisodes',{'id':[this.podcastId]})
-            this.episodesList = episodeTemp.map(function(el) {return {title:el.title,pic:el.image,src:el.audio,artist:el.pub_date.split('T')[0],theme:'pic'}})
-            this.checkLoading()
-
-        }
+            this.podcast= await this.$store.dispatch('getPodcast',{'id':[this.podcastId]})
+            this.parseFeed()
+        },
     }
 </script>
 
@@ -469,6 +375,22 @@
         align-items: center;
         border-style: solid;
         background-color: salmon;
+    }
+    .lds-roller {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 40px 40px;
+    }
+    .lds-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 7px;
     }
 
 </style>

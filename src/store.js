@@ -35,12 +35,12 @@ const baselistennotes = {
 export const axioslistennotes = axios.create(baselistennotes);
 
 
-const arrayToObject=(array, keyField)=>{
+/*const arrayToObject=(array, keyField)=>{
     array.reduce((obj, item) => {
         obj[item[keyField]] = item
         return obj
     }, {})
-}
+}*/
 
 Vue.use(Vuex)
 
@@ -48,13 +48,13 @@ export default new Vuex.Store({
     state: {
         podcasts: null,
         username:null,
-        firstName:localStorage.getItem('firstName'),
-        lastName:localStorage.getItem('lastName'),
-        profileType:localStorage.getItem('profileType'),
-        token:localStorage.getItem('authToken'),
-        userid:localStorage.getItem('userid'),
-        tokenExp:Math.max(localStorage.getItem('tokenExpTime')*1000-30000-Date.now(),1),
-        refreshTokenExp:localStorage.getItem('refreshTokenExp'),
+        firstName:null,
+        lastName:null,
+        profileType:null,
+        token:null,
+        userid:null,
+        tokenExp:null,
+        refreshTokenExp:null,
         profilePicture:null,
         intervalRefresh:null,
         company:null,
@@ -66,9 +66,9 @@ export default new Vuex.Store({
         newPodcast:{},
     },
     getters:{
-        turn2Dict(context, payload) {
+        /*turn2Dict(context, payload) {
             context.state.podcasts = arrayToObject(payload, 'id')
-        }
+        }*/
     },
     mutations: {
         LoadInfo(state) {
@@ -81,6 +81,8 @@ export default new Vuex.Store({
             state.firstName = localStorage.getItem('firstName')
             state.lastName = localStorage.getItem('lastName')
             state.refreshToken = localStorage.getItem('refreshToken')
+            state.tokenExp=Math.max(localStorage.getItem('tokenExpTime')*1000-30000-Date.now(),1)
+            state.refreshTokenExp=localStorage.getItem('refreshTokenExp')
             axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + state.token
         },
         switchType(state){
@@ -95,17 +97,31 @@ export default new Vuex.Store({
             state[payload.elment] = {}
         }
         ,
-        loadPodcastData(context, payload) {
+        /*loadPodcastData(context, payload) {
+/!*
             context.state.podcasts = arrayToObject(payload, 'id')
-        }
-        ,
+*!/
+        }*//*
+        ,*/
         clearAuthData(state) {
-            state.podcasts = null,
-                state.username = null,
-                state.token = null,
-                state.userid = null,
-                state.compaigns = []
-            console.log('cleared')
+            state.podcasts= null
+            state.username=null
+            state.firstName=null
+            state.lastName=null
+            state.profileType=null
+            state.token=null
+            state.userid=null
+            state.tokenExp=null
+            state.refreshTokenExp=null
+            state.profilePicture=null
+            state.intervalRefresh=null
+            state.company=null
+            state.compaigns=[]
+            state.compaign={}
+            state.ads={}
+            state.searchPodcast={}
+            state.genres={}
+            state.newPodcast={}
         },
         saveCompaign(state, payload) {
             state.compaigns = payload
@@ -121,18 +137,37 @@ export default new Vuex.Store({
         },
     }
     ,actions:{
+        async getPodcastRssInfo(context,payload)
+        {
+            try
+            {
+                let feedParsed =  await axiosInstance({
+                        url: "/checkRss/",
+                        method: "POST",
+                        data: payload
+                    }
+                )
+                return feedParsed.data
+            }
+            catch(e)
+            {
+                console.log('error')
+                console.log(e.response)
+                return 'failed'
+            }
+
+
+        },
         async refresh(context)
         {
             if(context.state.refreshTokenExp*1000<Date.now()+90000)
             {
                 alert('Votre sesssion a expirée, veuillez vous reconnecter')
                 context.dispatch('logout')
-                router.push('/podcaster/Login/')
+                router.push('/login/')
             }
             else
             {
-                console.log('exepires in',context.state.tokenExp/1000)
-                console.log('exepires refresh',context.state.refreshTokenExp/1000)
                 var refreshToken = localStorage.getItem('refreshToken')
                 let res = await axios.post('https://api.ladamin.com/api/token/refresh/',
                     {
@@ -160,7 +195,7 @@ export default new Vuex.Store({
                 formData.append('startDate',payload.startDate);
                 formData.append('name',payload.name);
                 formData.append('description',payload.description);
-                formData.append('type',payload.type);*/
+                formData.append('type',payload.type);
 /*              formData.append('countrylab',JSON.stringify(payload.countryLab));
                 formData.append('citylab',JSON.stringify(payload.cityLab));
                 formData.append('compaignPicture',payload.profilePicture)
@@ -209,7 +244,8 @@ export default new Vuex.Store({
                         name:payload.name,
                         description:payload.description,
                         podcast:payload.podcast.id,
-                        status:'Acceptée'
+                        status:'Acceptée',
+                        statusNum:2
                     }
                 });
             },
@@ -232,7 +268,6 @@ export default new Vuex.Store({
                 let message = await axiosInstance({
                     url: "/Messages/",
                     method: "POST",
-                    params: {},
                     data:payload
                 });
                 return message.data
@@ -301,6 +336,59 @@ export default new Vuex.Store({
                 await context.commit('deleteStateElement',{elment:'ads'})
             },
 
+            async updateCompagne(context,payload){
+                let campaign = await axiosInstance.patch('/Compaign/'+payload.id+'/',payload.data)
+                console.log(campaign.data)
+                return campaign.data
+            },
+            async sendAudioFile(context,payload){
+                let formData = new FormData();
+                console.log(payload.attachedFile)
+                formData.append('audioFile', payload.attachedFile);
+                formData.append('audioFileName', payload.attachedFileName);
+                formData.append('status', payload.status);
+                formData.append('statusNum', payload.statusNum);
+
+                let campaign = await axiosInstance({
+                    url: '/Compaign/'+payload.id+'/',
+                    method: "PATCH",
+                    params: {},
+                    data:formData
+                })
+                return campaign.data
+            },
+        async getEpisodes(context,payload){
+        let episodes = await axiosInstance({
+            url: '/episodesRss/',
+            method: "post",
+            params: {},
+            data:payload
+        })
+        return episodes.data}
+        ,
+        async getAttachedFiles(payload){
+            let attchedFiles = await axiosInstance({
+                url: "/Education/"+payload.id,
+                method: "GET",
+                params: {}
+            });
+            return attchedFiles.data
+        },
+            async sendProposition(context,payload){
+                let propositions = await axiosInstance({
+                    url: "/CompaignProposition/",
+                    method: "POST",
+                    params: {},
+                    data:payload
+                });
+                return propositions.data},
+            async getProposition(payload){
+                let propositions = await axiosInstance({
+                    url: "/CompaignProposition/"+payload.id,
+                    method: "GET",
+                    params: {}
+                });
+                return propositions.data},
             async register(context,payload) {
                 try {
                 let result = await axios.post('https://api.ladamin.com/auth/users/', {
@@ -327,10 +415,25 @@ export default new Vuex.Store({
                     return 'Login exists'
                 }
             },
+        async nextStep(context,payload){
+            await  axiosInstance({
+                url: "/validate/",
+                method: "POST",
+                params: {},
+                data:payload
+            })
+        },
+            async decline(context,payload){
+                await  axiosInstance({
+                    url: "/decline/",
+                    method: "POST",
+                    params: {},
+                    data:payload
+                })
+            },
             async savedata(context,payload){
                 let id = localStorage.getItem('userid')
                 let formData = new FormData();
-                console.log(payload.profilePicture)
                 formData.append('company', payload.company);
                 formData.append('type',payload.type);
                 formData.append('first_name',payload.first_name);
@@ -392,15 +495,12 @@ export default new Vuex.Store({
                 }
             },
             async tryAutoLogin (context) {
-                const token = localStorage.getItem('authToken')
-                context.stat.refreshTokenExp=localStorage.getItem('refreshTokenExp')
+             const token = localStorage.getItem('authToken')
                 if (!token)
                 {
                     return
                 }
                 context.commit('LoadInfo')
-                context.commit('refresh')
-
             },
             async getUserInfo(context){
                 console.log('I am in getUserInfo')

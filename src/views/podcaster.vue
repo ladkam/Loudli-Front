@@ -21,5 +21,4 @@
     .small-input {
         width: 20%;
     }
-
 </style>

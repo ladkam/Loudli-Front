@@ -1,7 +1,5 @@
 <template>
-    <v-app style="background-color: #FAFAFA;
-    background: url( 'https://images.unsplash.com/photo-1490476323407-63a2b2baa393?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2138&q=80') no-repeat center center;" >
-        <v-content>
+    <v-app style="background-color: #FAFAFA;">        <v-content>
 
         <v-card  width="400" style="height: fit-content" class="mx-auto mt-12 my-3" outlined flat>
                 <v-container>
@@ -10,11 +8,11 @@
                     <h1 justify="center" >Connexion</h1>
                 </v-card-title>
                     </v-row>
-                    <v-row justify="center" mx-auto mt-12 mb-0>
+<!--                    <v-row justify="center" mx-auto mt-12 mb-0>
                         <v-avatar  size="120" outlined>
                             <v-img src="@/static/podcast-icon-19.jpg"></v-img>
                         </v-avatar>
-                    </v-row>
+                    </v-row>-->
 
                 </v-container>
                 <v-alert
@@ -52,7 +50,7 @@
                     ></v-text-field>
 
                 <v-btn  class="mx-auto col-12 px-2 mt-3" type="submit" color="primary" @click="signIn" style="display: block" width="90%"  shaped> Connexion </v-btn>
-                <v-card-subtitle class="mx-auto col-12" style="text-align:center" > Pas de compte? <router-link class="font-weight-light text-center" to="/Annonceur/Register/"> cliquer ici </router-link></v-card-subtitle>
+                <v-card-subtitle class="mx-auto col-12" style="text-align:center" > Pas de compte? <router-link class="font-weight-light text-center" to="/register/"> cliquer ici </router-link></v-card-subtitle>
         </v-card>
             </v-content>
     </v-app>
@@ -84,7 +82,7 @@
                 }
                 else
                 {
-                    this.$router.push('/podcaster/dashboard/')
+                    this.$router.push('/dashboard/')
                 }
 
             }
@@ -101,7 +99,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        background: url( 'https://images.unsplash.com/photo-1490476323407-63a2b2baa393?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2138&q=80') no-repeat center center;
         background-size : auto;
         background-color: #FAFAFA;
         transform: scale(1.1);

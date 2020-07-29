@@ -1,7 +1,5 @@
 <template>
-    <v-app style="background-color: #FAFAFA" >
         <v-container>
-            <v-content light>
                 <h2> Création de compagne </h2>
                     <v-stepper v-model="step" vertical>
                         <v-stepper-step  :complete="step > 1" step="1" >
@@ -22,7 +20,6 @@
                                             @keypress.enter="step=step+1">
                                     </v-text-field>
                                 </v-card>
-                            <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                             <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.name.length>8"> suivant</v-btn>
                         </v-stepper-content>
                         <v-stepper-step  :complete="step >2" step="2">
@@ -55,97 +52,75 @@
                             </v-menu>
 
                             </v-card>
-                            <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
-                            <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
-                            </v-stepper-content>
-                        <v-stepper-step  :complete="step >3" step="3">
-                            Type de Campagne
-                            <small class='mt-1'> Quel type d'annoncer le podcast devrait partager.</small>
-                        </v-stepper-step>
-                        <v-stepper-content step="3">
-                                <v-card   flat width="1200px" style="border-style: none">
-                                    <v-select regular
-                                          hide-details
-                                          label="Type"
-                                          :items="types"
-                                          v-model="compaign.type"
-                                          outlined
-                                          style="width: 40%">
-                                </v-select>
-                                    </v-card>
-                            <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
+                            <v-btn color="black" dark @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                             <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
                             </v-stepper-content>
 
-                        <v-stepper-step  :complete="step >4" step="4">
+                        <v-stepper-step  :complete="step >3" step="3">
                             Genre de l'audimat
                             <small class='mt-1'> quel genre visez-vous ? </small>
 
                         </v-stepper-step>
-                        <v-stepper-content step="4">
+                        <v-stepper-content step="3">
                         <v-card flat class="d-flex mt-2 mb-2">
-                            <div class="ml-2"> <v-icon> fa-male </v-icon><label class="ml-1 mb-3" for="male"> Homme </label> <input id="male" type="radio" label="Male" v-model="compaign.targetGender" value="1"></div>
-                            <div class="ml-5"> <v-icon> fa-female </v-icon><label class="ml-1" for="female"> Femme </label> <input id="female" type="radio" v-model="compaign.targetGender" value="2"></div>
-                            <div class="ml-5"> <v-icon> fa-female </v-icon> <v-icon> fa-male </v-icon><label  class="ml-1" for="both"> Les deux </label> <input id="both" type="radio" label="Male" v-model="compaign.targetGender" value="3"></div>
+                            <v-btn-toggle
+                                    v-model="compaign.targetGender"
+                                    color="primary"
+                                    class="ml-3 mb-3"
+                            >
+                                <v-btn :value="1" text>
+                                    Femmes
+                                    <v-icon>fa-venus</v-icon>
+                                </v-btn>
+
+                                <v-btn :value="0" text>
+                                    Hommes
+                                    <v-icon>fa-mars</v-icon>
+                                </v-btn>
+
+                                <v-btn :value="2" text>
+                                    autre
+                                    <v-icon>fa-interogation</v-icon>
+                                </v-btn>
+                                <v-btn :value="3" text>
+                                    tous
+                                </v-btn>
+
+                            </v-btn-toggle>
                         </v-card>
-                        <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
+                        <v-btn color="black" dark @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                         <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
                             </v-stepper-content>
-                        <v-stepper-step  :complete="step >5" step="5">
+                        <v-stepper-step  :complete="step >4" step="4">
                             Âge
                             <small class='mt-1'> quel catégories d'âges visez-vous ? </small>
 
                         </v-stepper-step>
-                            <v-stepper-content step="5">
+
+                            <v-stepper-content step="4">
                                 <v-card   flat width="1200px" style="border-style: none">
-                                    <v-combobox
-                                            dense
-                                            hide-details
-                                            style="width: 40%"
-                                            deletable-chips
-                                            chips
-                                            outlined
-                                            :items="ageGroups"
-                                            item-text="name"
+
+                                    <v-btn-toggle
                                             v-model="compaign.ageGroup"
+                                            color="primary"
+                                            class="ml-3 mb-3"
                                             multiple
                                     >
-                                    </v-combobox>
+                                        <v-btn v-for="(ageGroup,index) in ageGroups" :key="index" :value="index" text>
+                                            {{ageGroup.name}}
+                                        </v-btn>
+
+                                    </v-btn-toggle>
                                 </v-card>
-                        <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
+                        <v-btn color="black" dark @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                         <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
                             </v-stepper-content>
-                        <v-stepper-step  :complete="step >6" step="6">
-                            Education
-                            <small class='mt-1'> Savez quel est le niveau d'éducation de l'audience visée ? </small>
 
-                        </v-stepper-step>
-                        <v-stepper-content step="6">
-                            <v-card   flat width="1200px" style="border-style: none">
-                            <v-combobox
-                                dense
-                                hide-details
-                                style="width: 40%"
-                                deletable-chips
-                                chips
-                                outlined
-                                :items="educationLevels"
-                                item-value="id"
-                                item-text="name"
-                                v-model="compaign.educationLevel"
-                                multiple
-                        >
-                        </v-combobox>
-                            </v-card>
-                        <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
-                        <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
-                                </v-stepper-content>
-
-                        <v-stepper-step  :complete="step >7" step="7">
+                        <v-stepper-step  :complete="step >5" step="5">
                             Description
                             <small class='mt-1'> Donnez une description à votre campagne pour aider le podcasteur à comprendre votre besoin. </small>
                         </v-stepper-step>
-                        <v-stepper-content step="7">
+                        <v-stepper-content step="5">
                             <v-card   flat width="1200px" style="border-style: none">
                             <v-textarea
                                         regular
@@ -158,17 +133,17 @@
                                         hint="decrivez le contenu de la compagne"
                                         label="Description">
                         </v-textarea>
-                                <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
+                                <v-btn color="black" dark @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                                 <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant
                                 </v-btn>
                                 </v-card>
                             </v-stepper-content>
-                        <v-stepper-step  :complete="step >8" step="8">
+                        <v-stepper-step  :complete="step >6" step="6">
                             Centre d'interêt
                             <small class='mt-1'> Quelles sont les centres d'interêt de la population visée? </small>
 
                         </v-stepper-step>
-                        <v-stepper-content step="8">
+                        <v-stepper-content step="6">
                             <v-card   flat width="1200px" style="border-style: none">
                             <v-combobox
                                     dense
@@ -185,19 +160,19 @@
                                     multiple
                             >
                             </v-combobox>
-                            <v-btn color="info" @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
+                            <v-btn color="black" dark @click="step=step-1" class="mt-2 ml-0 mr-2" width="120" > précédent </v-btn>
                             <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
                                 </v-card>
 
                                 </v-stepper-content>
 
-                        <v-stepper-step  :complete="step >9" step="9">
+                        <v-stepper-step  :complete="step >7" step="7">
                             Localisation
                             <small class='mt-1'> Quelles zones génographiques visez-vous? </small>
 
                         </v-stepper-step>
 
-                        <v-stepper-content step="9">
+                        <v-stepper-content step="7">
                             <v-card   flat width="1200px" style="border-style: none">
                             <v-autocomplete
                                     label="Pays"
@@ -231,17 +206,17 @@
                                     multiple
                             >
                             </v-autocomplete>
-                            <v-btn color="info" @click="step=step-1"  class="mt-2 ml-0 mr-2" width="120"> précédent </v-btn>
+                            <v-btn color="black" dark @click="step=step-1"  class="mt-2 ml-0 mr-2" width="120"> précédent </v-btn>
                             <v-btn color="primary" @click="step=step+1" width="120" class="mt-2" :disabled="!compaign.startDate.length"> suivant</v-btn>
                             </v-card>
                         </v-stepper-content>
 
 
-                        <v-stepper-step  :complete="step >10" step="10">
+                        <v-stepper-step  :complete="step >8" step="10">
                             Autre
                             <small class='mt-1'> un fichier ou un lien à ajouter ? </small>
                         </v-stepper-step>
-                            <v-stepper-content step="10">
+                            <v-stepper-content step="8">
                                 <v-card   flat width="1200px" style="border-style: none">
                                     <v-text-field
                                             type="url"
@@ -252,11 +227,11 @@
                                             label="Url du produit"
                                             outlined
                                             placeholder="http://example.com"
-                                            @keypress.enter="step=step+1">
+                                            @keypress.enter="CreateCompaign">
                                     </v-text-field>
-                            <v-file-input v-model="file" outlined style="width: 40%"></v-file-input>
-                            <v-btn color="info" @click="step=step-1"  class="mt-2 ml-0 mr-2" width="120"> précédent </v-btn>
-                            <v-btn color="success" @click="CreateCompaign" class="mt-2 ml-0 mr-2" width="225"> Créer la compagne <v-icon style="align: center">mdi-bullhorn</v-icon>
+                            <v-file-input v-model="file"  outlined style="width: 40%"></v-file-input>
+                            <v-btn color="black" dark @click="step=step-1"  class="mt-2 ml-0 mr-2" width="120"> précédent </v-btn>
+                            <v-btn color="primary" @click="CreateCompaign" class="mt-2 ml-0 mr-2" width="225"> Créer la compagne <v-icon style="align: center">mdi-bullhorn</v-icon>
                             </v-btn>
                                 </v-card>
 
@@ -265,9 +240,7 @@
                 </v-card>
 -->
                     </v-stepper>
-            </v-content>
         </v-container>
-    </v-app>
 </template>
 
 
@@ -319,18 +292,20 @@
                 this.$store.state.newCompaign = this.compaign
                 console.log(payload)
                 payload['podcast']=this.podcast['id']
-                payload['educationLevel'] = this.extractId(this.compaign.educationLevel)
-                payload['ageGroup'] = this.extractId(this.compaign.ageGroup)
+                payload['actionFor']=this.podcast.author.id
                 payload['city'] = this.compaign.city
                 payload['country'] = this.compaign.country
                 payload['interests'] =  this.extractId(this.compaign.interests)
                 payload['status']= this.podcast['id']?'Demandée':'Créée'
-
                 let compaign = await this.$store.dispatch('CreateCompaign', payload)
                 let id = compaign.id
-                this.$store.dispatch('sendCompaignFile',{'attachedFile':this.file,'attachedFileName':this.fileName,'compaign':id})
+                if(this.file)
+                {
+                    this.$store.dispatch('sendCompaignFile',{'attachedFile':this.file,'attachedFileName':this.fileName,'compaign':id})
 
-                this.$router.push('/annoncer/campaign/'+id)
+                }
+
+                this.$router.push('/advertiser/campaign/'+id)
             },
             extractId(objects){
                 if(objects)
