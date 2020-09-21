@@ -14,6 +14,16 @@ export const formatter = {
             else
                 return false
         },
+        convert2Date(DateToFormat) {
+            let d = new Date(DateToFormat.split(".")[0].replace("T", " "))
+            let today = new Date();
+            if(d.getDate()==today.getDate())
+            {
+                return d.getHours() +':'+ d.getMinutes().toString()
+            }
+            else
+                return d.getDay()+'-'+d.getMonth()+'-'+d.getFullYear()
+        },
 
         checkRefreshToken: function(refreshToken,refreshTokenExp){
 

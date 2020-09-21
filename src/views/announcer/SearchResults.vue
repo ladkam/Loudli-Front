@@ -55,6 +55,7 @@
                     <v-autocomplete
                             hide-details
                             outlined
+                            dense
                             v-model="filters.categories"
                             label="Catégorie"
                             :items="categories"
@@ -64,10 +65,51 @@
                             class="mt-4"
                     >
                         </v-autocomplete>
+                  <!--  <v-expansion-panels flat width="100%">
+                    <v-expansion-panel class="ma-0 pa-0">
+                        <v-expansion-panel-header> Catégories </v-expansion-panel-header>
+                        <v-expansion-panel-content class="ma-0 pa-0">
+                    <v-list width="100%">
+                        <v-list-item-group
+                                v-model="filters.categories"
+                                multiple
+                        >
+                            <template v-for="(item, i) in categories">
+                                <v-divider
+                                        v-if="!item"
+                                        :key="`divider-${i}`"
+                                ></v-divider>
+
+                                <v-list-item
+                                        v-else
+                                        :key="`item-${i}`"
+                                        :value="item.Name"
+                                        active-class="deep-purple&#45;&#45;text text&#45;&#45;accent-4"
+                                >
+                                    <template v-slot:default="{ active }">
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="item.NameFR"></v-list-item-title>
+                                        </v-list-item-content>
+
+                                        <v-list-item-action>
+                                            <v-checkbox
+                                                    :input-value="active"
+                                                    color="primary accent-4"
+                                            ></v-checkbox>
+                                        </v-list-item-action>
+                                    </template>
+                                </v-list-item>
+                            </template>
+                        </v-list-item-group>
+                        </v-list>
+                        </v-expansion-panel-content>
+                        </v-expansion-panel>
+                        </v-expansion-panels>-->
 
                     <v-autocomplete
                             v-model="filters.countries"
                             hide-details
+                            dense
                             outlined
                             label="Pays"
                             :items="countries"
@@ -84,7 +126,7 @@
                             outlined
                             label="Ville"
                             v-model="filters.cities"
-
+                            dense
                             :items="cities"
                             item-value="name"
                             item-text="name"
@@ -97,6 +139,7 @@
                     <v-autocomplete
                             hide-details
                             outlined
+                            dense
                             label="Âges"
                             v-model="filters.ageGroups"
                             :items="ageGroups"
@@ -111,6 +154,7 @@
                     <v-autocomplete
                             hide-details
                             outlined
+                            dense
                             label="Genre"
                             v-model="filters.targetGenders"
                             :items="['Homme','Femme','Autre','Tous']"
@@ -130,7 +174,7 @@
                 </v-card>
 
 
-            <v-card class="ml-2 flex-grow-1 justify-start align-center d-flex flex-column mr-2 "  flat  style="width:100%;height:100%;border-style: solid">
+            <v-card class="ml-2 flex-grow-1 justify-start d-flex flex-column mr-2 "  flat  style="width:100%;height:100%">
                 <div class="d-flex align-center mb-2 mr-2" style="width: 50%">
                 <v-text-field outlined
                               dense
@@ -163,13 +207,14 @@
                 </v-chip-group>
 
 
-                <v-card align="start" justify="center" class="d-flex flex-wrap mt-2 justify-start" flat style="border-style: solid">
+                <v-card align="start" justify="start" class="d-flex flex-wrap mt-2 justify-start" flat >
 
                         <v-card-text class="ml-3 mt-2" v-if="results.length==0"> Votre recherche ne correponds à aucun podcast ,contacter notre support pour plus d'information support@loudli.com</v-card-text>
 
-                    <v-sheet
+                    <v-card
                             style="border-style: solid"
                             v-for="p in results.slice((page-1)*9,page*9)" :key="p.id"
+                            flat
                     >
 
                     <v-card
@@ -208,7 +253,7 @@
                             </v-col>
                         </v-row>
                     </v-card>
-                    </v-sheet>
+                    </v-card>
                 </v-card>
 
                 <v-pagination

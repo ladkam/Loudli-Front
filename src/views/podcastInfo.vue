@@ -1,6 +1,6 @@
 <template>
 
-            <v-container fluid >
+            <v-card class="d-flex flex-column fill-height pa-2" flat >
 
                 <v-card outlined class="pa-2 mt-5" height="100%">
                 <div  class="d-flex justify-space-between align-stretch" style="border-style: none;width: 100%">
@@ -144,7 +144,7 @@
                     </div>
 
                 </v-card>
-            </v-container>
+            </v-card>
 </template>
 
 <script>

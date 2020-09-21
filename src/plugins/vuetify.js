@@ -8,7 +8,7 @@ const vuetify = new Vuetify({
     theme: {
         themes: {
             light: {
-                primary: '#ef5d50',
+                primary: '#00796b',
                 secondary: '#00796b',
                 anchor: '#8c9eff',
                 background: colors.indigo, // Not automatically applied

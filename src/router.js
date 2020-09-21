@@ -7,7 +7,11 @@ import Register from "@/views/Auth/register";
 import Login from "@/views/Auth/Login";
 import announcer from "@/views/announcer";
 import newcompaign from "@/components/newCompaignDiag";
-import campaignPodcaster from "@/views/podcaster/compaignoo";
+import  compaign from "@/views/compaign";
+import messages from "@/views/compaignoo";
+import account from "@/views/Account";
+
+
 import store from './store';
 /*
 import addPodcastToComp from "@/views/List_podcaster";
@@ -27,14 +31,18 @@ import requestCompaign from "@/views/announcer/requestCompaign";
 import messages from "@/views/messages";
 */
 import notFound from "@/views/404"
-import campaignAnnouncer from "@/views/announcer/compaign";
-
+/*</!*import campaignAnnouncer from "@/views/announcer/compaign";
+*!/>*/
 import campaigns from "@/views/announcer/campaigns"
 
 Vue.use(VueRouter)
 
 const Router = new VueRouter({mode:'history',routes:[
         { path: '/', component: home,name:'home' },
+        { path: '/account/', component: account,name:'account' },
+        { path: '/messages/', component: messages,name:'messages' },
+
+
         { path: '/register/', component:  Register},
         { path: '/login/', component:  Login,name:'login', beforeEnter(to, from, next) {
                 // check vuex store //
@@ -52,7 +60,10 @@ const Router = new VueRouter({mode:'history',routes:[
                 { path: 'search', component:  SearchResults},
                 { path: 'campaigns', component:  campaigns},
                 { path: 'requestcampaign/:id', component:  requestCompaign},
-                {path:'campaign/:id',component: campaignAnnouncer}
+                {path:'campaign/:id',component: compaign},
+                {path:'messages/',component: messages}
+
+
             ],
             async beforeEnter(to, from, next) {
                 // check vuex store //
@@ -72,8 +83,8 @@ const Router = new VueRouter({mode:'history',routes:[
                 {path:'podcasts',component:PodcasterPodcasts,name:'Podcasterdetails'},
                 {path: 'Addpodcast', component:  addPodcast,name:'addPodcast'},
                 { path: 'campaigns', component:  campaigns},
-                {path:'campaign/:id',component: campaignPodcaster}
-
+                {path:'campaign/:id',component: compaign},
+                {path:'messages/:id',component: messages}
 
             ],
             async beforeEnter(to, from, next) {

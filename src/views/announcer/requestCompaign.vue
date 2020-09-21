@@ -280,7 +280,7 @@
         },
         computed: {
             defaultImage() {
-                    return require('@/assets/default_podcast.jpg')
+                    return require('@/assets/default_podcast.png')
             }
         },
         methods: {

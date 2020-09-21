@@ -48,11 +48,14 @@ export default new Vuex.Store({
     state: {
         podcasts: null,
         username:null,
-        firstName:null,
-        lastName:null,
+        first_name:null,
+        last_name:null,
         profileType:null,
         token:null,
         userid:null,
+        street:null,
+        city:null,
+        country:null,
         tokenExp:null,
         refreshTokenExp:null,
         profilePicture:null,
@@ -76,14 +79,41 @@ export default new Vuex.Store({
             state.token = localStorage.getItem('authToken')
             state.userid = localStorage.getItem('userid')
             state.company = localStorage.getItem('company')
+            state.street = localStorage.getItem('street')
+            state.country = localStorage.getItem('country')
+            state.city = localStorage.getItem('city')
+            state.phone = localStorage.getItem('phone')
+
             state.profileType = localStorage.getItem('profileType')
             state.profilePicture = localStorage.getItem('profilePicture')
-            state.firstName = localStorage.getItem('firstName')
-            state.lastName = localStorage.getItem('lastName')
+            state.first_name = localStorage.getItem('first_name')
+            state.last_name = localStorage.getItem('last_name')
             state.refreshToken = localStorage.getItem('refreshToken')
             state.tokenExp=Math.max(localStorage.getItem('tokenExpTime')*1000-30000-Date.now(),1)
             state.refreshTokenExp=localStorage.getItem('refreshTokenExp')
             axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + state.token
+        },
+        updateUserData(state,payload){
+            console.log('here')
+            state.first_name = localStorage.setItem('first_name',payload.first_name)
+            state.last_name = localStorage.setItem('last_name',payload.last_name)
+            state.username = localStorage.setItem('username',payload.username)
+            state.username = localStorage.getItem('username')
+            state.first_name = localStorage.getItem('first_name')
+            state.last_name = localStorage.getItem('last_name')
+        },
+        updateUserInfoData(state,payload){
+            console.log('here')
+            localStorage.setItem('company',payload.company)
+            localStorage.setItem('street',payload.street)
+            localStorage.setItem('country',payload.country)
+            localStorage.setItem('city',payload.city)
+            localStorage.setItem('phone',payload.phone)
+            state.company = localStorage.getItem('company')
+            state.street = localStorage.getItem('street')
+            state.country = localStorage.getItem('country')
+            state.city = localStorage.getItem('city')
+            state.phone = localStorage.getItem('phone')
         },
         switchType(state){
             if (state.profileType=='annoncer'){
@@ -106,8 +136,8 @@ export default new Vuex.Store({
         clearAuthData(state) {
             state.podcasts= null
             state.username=null
-            state.firstName=null
-            state.lastName=null
+            state.first_name=null
+            state.last_name=null
             state.profileType=null
             state.token=null
             state.userid=null
@@ -393,7 +423,11 @@ export default new Vuex.Store({
                 try {
                 let result = await axios.post('https://api.ladamin.com/auth/users/', {
                     'username': payload.email,
+                    'country': payload.country,
+                    'city': payload.city,
+                    'street': payload.street,
                     'email': payload.email,
+                    'phone': payload.phone,
                     'first_name':payload.name,
                     'last_name':payload.surname,
                     'password': payload.password});
@@ -405,6 +439,10 @@ export default new Vuex.Store({
                         'company': payload.Compagnie,
                         'first_name':payload.name,
                         'last_name':payload.surname,
+                        'country': payload.country,
+                        'city': payload.city,
+                        'street': payload.street,
+                        'phone': payload.phone,
                         'type':payload.type,
                         'profilePicture':payload.profilePicture
                     });
@@ -435,6 +473,10 @@ export default new Vuex.Store({
                 let id = localStorage.getItem('userid')
                 let formData = new FormData();
                 formData.append('company', payload.company);
+                formData.append('city', payload.city);
+                formData.append('country', payload.country);
+                formData.append('street', payload.street);
+                formData.append('phone', payload.phone);
                 formData.append('type',payload.type);
                 formData.append('first_name',payload.first_name);
                 formData.append('last_name',payload.last_name);
@@ -449,6 +491,19 @@ export default new Vuex.Store({
                 context.state.company=payload.company
                 context.state.profilePicture=userInfo.profilePicture
                 context.state.profileType=userInfo.type
+            },
+            async updateProfilePicture(context,payload){
+                let id = localStorage.getItem('userid')
+                let formData = new FormData();
+                formData.append('profilePicture',payload.profilePicture)
+                let userInfo = await axiosInstance({
+                    url: "/usersInfo/"+id+'/',
+                    method: "Patch",
+                    params: {},
+                    data:formData
+                }).catch((error)=>console.log(error.response))
+                context.state.profilePicture=userInfo.data.profilePicture
+                localStorage.setItem('profilePicture',userInfo.data.profilePicture)
             },
             async sendCompaignFile(context,payload){
                 let formData = new FormData();
@@ -471,13 +526,12 @@ export default new Vuex.Store({
                         password: payload.password});
                     var decoded=jwt_decode(res.data.access)
                     var refresh_decoded=jwt_decode(res.data.refresh)
-                    console.log('info',decoded)
                     localStorage.setItem('refreshTokenExp', refresh_decoded.exp)
                     localStorage.setItem('authToken', res.data.access);
                     localStorage.setItem('refreshToken', res.data.refresh);
                     localStorage.setItem('username', decoded.email);
-                    localStorage.setItem('firstName', decoded.first_name);
-                    localStorage.setItem('lastName', decoded.last_name);
+                    localStorage.setItem('first_name', decoded.first_name);
+                    localStorage.setItem('last_name', decoded.last_name);
                     localStorage.setItem('tokenExpTime', decoded.exp);
                     axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.access
                     context.state.tokenExp = decoded.exp*1000-Date.now()
@@ -514,9 +568,13 @@ export default new Vuex.Store({
                 localStorage.setItem('company', userInfo.data[0].company);
                 localStorage.setItem('profilePicture', userInfo.data[0].profilePicture);
                 localStorage.setItem('profileType', userInfo.data[0].type);
+                localStorage.setItem('phone', userInfo.data[0].phone);
+                localStorage.setItem('street', userInfo.data[0].street);
+                localStorage.setItem('country', userInfo.data[0].country);
+                localStorage.setItem('city', userInfo.data[0].city);
                 context.state.profileType=userInfo.data[0].type
-                context.state.firstName=userInfo.data[0].user.first_name
-                context.state.lastName=userInfo.data[0].user.last_name
+                context.state.company=userInfo.data[0].user.company
+
             },
             logout(context){
                 localStorage.clear()
@@ -531,13 +589,25 @@ export default new Vuex.Store({
                 context.commit('saveCompaign',response.data);
                 return response.data
             },
+            async getCompaignsSummary(context){
+                let response = await axiosInstance({
+                    url: "/campaignsummary/",
+                    method: "get",
+                    params: {}
+                });
+                context.commit('saveCompaign',response.data);
+                return response.data
+            },
 
             async GetCompagne(context,payload){
                 let compagneData = await axiosInstance({
-                        url: "/Compaign/"+payload.id.toString(),
+                        url: "/Compaign/"+payload.id.toString()+'/',
                         method: "get"
                     });
+                console.log('here')
+/*
                     context.commit('loadCompaignData',compagneData.data);
+*/
                     return compagneData.data
             },
             async getPodcasts(context){
@@ -547,11 +617,39 @@ export default new Vuex.Store({
                 });
                 context.commit('StoreInfo',{storeField:'podcasts',data:podcasts.data,idField:'id'});
             },
-            async getPodcast(context,payload){
+            async getPlays(context,payload){
+                 console.log(payload)
+                let plays = await axiosInstance({
+                    url: "/playsDetails/",
+                    method: "post",
+                    data:payload
+                });
+                return plays.data
+            },
+        async updateUser(context,payload){
+            let user = await axiosInstance({
+                url: "/users/"+context.state.userid+'/',
+                method: "patch",
+                data:payload
+            });
+            context.commit('updateUserData',user.data)
+            return user.data
+        },
+            async updateUserInfo(context,payload){
+                let user = await axiosInstance({
+                    url: "/usersInfo/"+context.state.userid+'/',
+                    method: "patch",
+                    data:payload
+                });
+                context.commit('updateUserInfoData',user.data)
+                return user.data
+            },
+        async getPodcast(context,payload){
                 let podcast = await axiosInstance({
                     url: "/podcasts/"+(payload.id.toString())+'/',
                     method: "get"
                 });
+
                 return podcast.data
             },
             async EnvoyerDemande(context,payload){
@@ -566,6 +664,13 @@ export default new Vuex.Store({
                     url: "/ads?"+'compaign='+context.state.compaign.id.toString(),
                     method: "get"});
                 context.commit('StoreInfo',{storeField:'ads',data:ads.data,idField:'id'});
+            },
+            async postRead(context,payload){
+                await axiosInstance({
+                    url: "/read/",
+                    method: "post",
+                data:payload});
+
             },
             async getGenres(context) {
                 const base = {

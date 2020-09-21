@@ -1,6 +1,5 @@
 <template>
-
-        <v-card flat width="1000" class="mx-auto">
+        <v-card flat  >
             <v-card-title>
                 Mes campagnes
             </v-card-title>
@@ -29,10 +28,7 @@
 
             </v-data-table>
         </v-card>
-
-
 </template>
-
 <script>
 
 
@@ -47,8 +43,6 @@
                         sortable: true,
                         value: 'name',
                     },
-
-
                     {
                         text: 'status',
                         align: 'center',
@@ -66,6 +60,30 @@
                         align: 'center',
                         sortable: true,
                         value: 'startDate',
+                    },
+                    {
+                        text: 'Ecoutes',
+                        align: 'center',
+                        sortable: true,
+                        value: 'advancement',
+                    },
+                    {
+                        text: 'Objectif',
+                        align: 'center',
+                        sortable: true,
+                        value: 'plays',
+                    },
+                    {
+                        text: 'Ecoutes',
+                        align: 'center',
+                        sortable: true,
+                        value: 'advancement',
+                    },
+                    {
+                        text: 'PCM',
+                        align: 'center',
+                        sortable: true,
+                        value: 'price',
                     },
 
                 ]

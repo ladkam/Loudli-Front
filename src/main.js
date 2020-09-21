@@ -14,6 +14,15 @@ import {vueImgPreview} from 'vue-img-preview'
 import VueJWT from 'vuejs-jwt'
 
 import VueSvgGauge from 'vue-svg-gauge'
+import {BulletChartPlugin} from '@syncfusion/ej2-vue-charts';
+import VuePlotly from '@statnett/vue-plotly'
+import VueHtml2pdf from 'vue-html2pdf'
+Vue.use(VueHtml2pdf)
+
+
+Vue.use(BulletChartPlugin)
+
+Vue.use(VuePlotly)
 
 Vue.use(VueSvgGauge)
 
@@ -37,7 +46,7 @@ new Vue({
   store,
   render: h => h(App),
   icons: {
-    iconfont: 'faSvg',
+    iconfont: 'fa',
 },
 }).$mount('#app')
 

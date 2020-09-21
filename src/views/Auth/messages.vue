@@ -182,12 +182,12 @@
                     this.sending=true
                     let sentmessage = await this.$store.dispatch('sendMessage',formData)
                     sentmessage['sender']={}
-                    sentmessage.sender.first_name=this.$store.state.firstName
-                    sentmessage.sender.last_name=this.$store.state.lastName
+                    sentmessage.sender.first_name=this.$store.state.first_name
+                    sentmessage.sender.last_name=this.$store.state.last_name
                     sentmessage.sender.UserProfileInfo=
                         {
-                            first_name:this.$store.state.firstName,
-                            last_name:this.$store.state.lastName,
+                            first_name:this.$store.state.first_name,
+                            last_name:this.$store.state.last_name,
                             company:this.$store.state.company,
                             profilePicture:this.$store.state.profilePicture.replace("https://api.ladamin.com",'')
                         }

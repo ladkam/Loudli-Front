@@ -5,7 +5,7 @@
                 <v-breadcrumbs class="pa-1 mb-2" :items="items" divider=">"></v-breadcrumbs>
 -->
                             <v-card v-if="compaigns[id]"  class="pa-2 d-flex mx-auto" height="90vh" style="border-style: solid;" flat>
-                                <v-card width="400">
+                                <v-card width="400" style="border-style: solid">
                                     <v-card-title>
                                         Campagnes
                                     </v-card-title>
@@ -20,9 +20,6 @@
                                             <v-list-item-content style="border-style: solid ">
                                             <v-list-item-title>{{item.name}}</v-list-item-title>
                                             </v-list-item-content>
-                                            <v-chip label color="primary ligthen-2">
-                                                {{item.status}}
-                                            </v-chip>
 
 
 
@@ -33,8 +30,6 @@
                                 <v-card style="border: crimson;" class="scroller" width="70%"  color="#FAFAFA">
                                     <v-toolbar style="border-left: none" >
                                         <v-toolbar-title>{{compaigns[id].name}}</v-toolbar-title>
-
-
                                     </v-toolbar>
                                     <v-sheet style="overflow-y: scroll;height: 70vh;background-color: #FAFAFA" class="scroll mb-2" c>
 
@@ -566,7 +561,6 @@
 
                 <v-dialog v-model="diagOtherDates">
                     <v-card>
-
                     <v-textarea
                     class="ml-3 mt-3"
                     v-model="compaigns[id].pitch"
@@ -596,7 +590,6 @@
                             </v-btn>
                         </v-card-actions>
                     </v-card>
-
 
                 </v-dialog>
                 <v-dialog v-model="diagSelect"

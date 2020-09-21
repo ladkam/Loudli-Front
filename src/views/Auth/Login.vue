@@ -78,7 +78,7 @@
                 }
                 else if(this.$store.state.profileType=="announcer")
                 {
-                    this.$router.push('/search/')
+                    this.$router.push('/announcer/search/')
                 }
                 else
                 {

@@ -1,14 +1,16 @@
 <template>
     <v-app light :style="{background: $vuetify.theme.themes[theme].background}">
         <v-navigation-drawer
-                v-if="$store.state.profileType=='announcer'&& $store.state.token"
+                v-if="$store.state.token"
                 app
-                mini-variant
+                class="justify-center"
                 hide-overlay
+                mini-variant
                 clipped
+                width="200"
                 left
-                color="primary"
-                dark
+                color="#FAFAFA"
+                light
         >
            <!-- <v-list>
                 <v-list-item class="mx-auto">
@@ -19,7 +21,7 @@
 
                 <v-list-item link>
                     <v-list-item-content>
-                        <v-list-item-title class="title"> {{$store.state.firstName}} {{$store.state.lastName}}</v-list-item-title>
+                        <v-list-item-title class="title"> {{$store.state.first_name}} {{$store.state.last_name}}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>-->
@@ -29,10 +31,12 @@
 -->
 
             <v-list
+                    class="d-flex-column justify-center align-center center"
+                    height="100%"
                     nav
-                    dense
+
             >
-                <v-list-item link to="/announcer/search/" class="justify-center">
+                <v-list-item  link to="/announcer/search/" class="justify-center grow">
                     <v-list-item-icon>
                         <v-icon>fa-podcast</v-icon>
                     </v-list-item-icon>
@@ -42,6 +46,12 @@
                     <v-list-item-icon>
                         <v-icon>fa-bullhorn</v-icon>
                     </v-list-item-icon>
+                    <v-list-item-title>Messages</v-list-item-title>
+                </v-list-item>
+                <v-list-item link to="/announcer/messages/">
+                    <v-list-item-icon>
+                        <v-icon>fa-envelope</v-icon>
+                    </v-list-item-icon>
                     <v-list-item-title>Campagnes</v-list-item-title>
                 </v-list-item>
                 <v-list-item link>
@@ -49,6 +59,12 @@
                         <v-icon>mdi-star</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Favoris</v-list-item-title>
+                </v-list-item>
+                <v-list-item link to="/Account/">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Account</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
@@ -65,7 +81,7 @@
                 <v-avatar size=100>
                     <v-img :src="$store.state.profilePicture"></v-img>
                 </v-avatar>
-                <v-list-item-title link class="title white&#45;&#45;text"> {{$store.state.firstName}} {{$store.state.lastName}}</v-list-item-title>
+                <v-list-item-title link class="title white&#45;&#45;text"> {{$store.state.first_name}} {{$store.state.last_name}}</v-list-item-title>
 
             </div>
 
@@ -108,6 +124,16 @@
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
 
             <v-spacer></v-spacer>
+            <v-chip v-if="$store.state.token">
+                <div>
+            <v-avatar
+                                      size="30" left>
+                <v-img :src="$store.state.profilePicture">
+
+                </v-img>
+            </v-avatar>
+                {{ $store.state.first_name }}</div>
+            </v-chip>
             <v-item-group  class="hidden-sm-and-down">
                 <v-btn   text to="/FAQ/">
                     Aide ?
@@ -151,7 +177,7 @@
                 </v-list-item-group>
             </v-list>
         </v-navigation-drawer>-->
-        <v-content>
+        <v-content style="background-color: #FAFAFA">
                 <router-view></router-view>
         </v-content>
 

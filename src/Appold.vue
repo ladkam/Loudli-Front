@@ -82,7 +82,6 @@
 
     import footer from '@/components/footer'
 
-
     export default {
         data: () => ({
             drawer: false,

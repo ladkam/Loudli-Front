@@ -67,6 +67,18 @@
                         sortable: true,
                         value: 'startDate',
                     },
+                    {
+                        text: 'Ecoutes',
+                        align: 'center',
+                        sortable: true,
+                        value: 'advancement',
+                    },
+                    {
+                        text: 'Objectif',
+                        align: 'center',
+                        sortable: true,
+                        value: 'plays',
+                    },
 
                 ]
             };

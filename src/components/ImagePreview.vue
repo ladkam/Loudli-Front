@@ -6,20 +6,24 @@
 </style>
 
 <template>
-    <v-container fluid >
-    <div size="100"  tile align="center"  class="mx-auto" justify="center">
-        <v-row align="center"  class="mx-auto" justify="center">
-        <v-img :src="defaultImage" ref="img" alt="" size="100%"/>
+    <div style="width: 250px" class="pa-0 ma-0" >
+        <v-row justify="center" class="mx-auto" style="width:250px">
+        <v-avatar  size="245" style="border: grey 0.75px solid" tile >
+        <v-img :src="defaultImage" ref="img"/>
+
+        </v-avatar>
+
         </v-row>
-        </div>
-        <v-row  style="border-style: none" align="center"  class="mx-auto" justify="center">
-            <v-btn  id="vue-img-preview-button" align="center" @click="$refs.file.click ()" radius="20"  justify="center" color="primary" width="100%">
-                changer image
+
+        <v-row  style="width:250px"  justify="center" align="center">
+            <v-btn   text id="vue-img-preview-button" align="right" @click="$refs.file.click ()" justify="center"  >
+                <v-icon left>fa-camera</v-icon> Modifier
             </v-btn>
+
             <input v-show="false" type="file" id="file" ref="file" accept="image/*"  v-on:change="handleFileUpload()"/>
 
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

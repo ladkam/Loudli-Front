@@ -15,7 +15,6 @@
                                 <v-card-title class="mt-0 mb-0 py-0 flex-grow">
                                     {{podcast.name}}
                                 </v-card-title>
-
                                 <v-card-subtitle class="mt-0 mb-0 py-0">
                                     <strong> {{this.podcast.categories.join(' | ')}}  </strong>
                                 </v-card-subtitle>
@@ -27,20 +26,17 @@
                                     {{podcast.editor}}
                                 </v-card-subtitle>
                             </div>
-
                             <div class="d-flex flex-column" style="border-style: none" >
                                 <div class="d-flex justify-start ml-3">
                                     <v-card  style="height: 100%" class="pa-2"    color="#00796b"  outlined >
                                         <div style="text-align: center;border-style: none;color: white"> Tarif indicatif </div>
                                         <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.price)}} €/ <span>  CPM </span></div>
                                     </v-card>
-
                                     <v-card  class="ml-4 pa-2"  color="secondary"  c outlined x-large>
                                         <div style="text-align: center;border-style: none;font-size: 16px;color: white"> Ecoutes </div>
                                         <div style="text-align: center;font-weight: bold;font-size: 18px;color:white">{{numberWithSpaces(podcast.nbPlays)}}/Mois</div>
                                     </v-card>
                                 </div>
-
                                 <div class="d-flex mt-12">
                                     <v-chip v-for="(tag,index) in podcast.tags" class="ml-2"  :key="index" label small light  color="grey lighten-2">
                                         {{tag}} <v-icon small>mdi-tag</v-icon>
@@ -50,7 +46,6 @@
                             </div>
                         </div>
                         <div v-if="isOwner" class="d-flex flex-column align-start">
-
                             <v-btn color="secondary" dark width="300"  height="50">
                                 <v-icon>
                                     mdi-star
@@ -58,9 +53,6 @@
                                 ajouter à mes favoris
                             </v-btn>
                         </div>
-
-
-
                     </div>
                 </v-card>
 

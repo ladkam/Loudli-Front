@@ -1,6 +1,8 @@
 <template>
                 <v-card  class="d-flex flex-column justify-center" flat>
-                    <v-card  class="scroller mr-4 ml-4 mb-0 pb-0" style="height: 60vh" outlined>
+                    <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
+
+                    <v-card else  class="scroller mr-4 ml-4 mb-0 pb-0" style="height: 60vh" outlined>
                         <v-list outlined style=";width:100%" class="mx-auto">
                             <template  v-for="(item) in messages" style="border: none blue;width:100%">
                                 <v-subheader
@@ -57,6 +59,7 @@
     export default {
         data() {
             return {
+                loading:true,
                 item:3,
                 sentMessages:[],
                 compaigns:[],
@@ -144,12 +147,12 @@
                     this.sending=true
                     let sentmessage = await this.$store.dispatch('sendMessage',formData)
                     sentmessage['sender']={}
-                    sentmessage.sender.first_name=this.$store.state.firstName
-                    sentmessage.sender.last_name=this.$store.state.lastName
+                    sentmessage.sender.first_name=this.$store.state.first_name
+                    sentmessage.sender.last_name=this.$store.state.last_name
                     sentmessage.sender.UserProfileInfo=
                         {
-                            first_name:this.$store.state.firstName,
-                            last_name:this.$store.state.lastName,
+                            first_name:this.$store.state.first_name,
+                            last_name:this.$store.state.last_name,
                             company:this.$store.state.company,
                             profilePicture:this.$store.state.profilePicture.replace("https://api.ladamin.com",'')
                         }
@@ -202,7 +205,7 @@
         },
         async created() {
             this.compaigns = await this.$store.dispatch('getCompaigns')
-            console.log(this.selectedCampaign)
+            this.loading=false
              }
     }
 

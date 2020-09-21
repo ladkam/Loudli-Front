@@ -1,6 +1,10 @@
 <template>
             <v-card  class="mx-auto mt-2"  width="1500" flat  >
-                    <v-stepper  class="elevation-0" alt-labels v-model="step" style="elevation: 0;border-style: none" >
+                <div id="dd">
+                    lolo
+                    <vue-step :now-step="nowStep" :step-list="stepList"></vue-step>
+                </div>
+                    <!--<v-stepper  class="elevation-0" alt-labels v-model="step" style="elevation: 0;border-style: none" flat>
                         <v-stepper-header  style="elevation: 0;border-style: none">
                             <v-stepper-step editable edit-icon="mdi-check" style="border-style: none;elevation: 0"  :complete="step >1" step="1">
                             Campagne
@@ -39,7 +43,7 @@
                                 <span class="text-center"> Campagne terminée</span>
                             </v-stepper-step>
                         </v-stepper-header>
-                        <v-stepper-content step="1">
+                       &lt;!&ndash; <v-stepper-content step="1">
                             <v-card  flat>
                                 <v-card-subtitle class="text-center pa-0 ma-0">Nom de la campagne</v-card-subtitle>
                                 <v-card-title class="text-center justify-center mt-2 pt-0" >
@@ -141,7 +145,7 @@
                             </v-card>
                         </v-stepper-content>
 
-                        <v-stepper-content step="3" class="elevation--0">
+                        <v-stepper-content step="3" class="elevation&#45;&#45;0">
                             <v-text>
                                 Un membre de notre équipe vous contactera afin d'approvisioner la somme de la proposition.
                             </v-text>
@@ -249,8 +253,8 @@
                                     Refuser
                                 </v-btn>
                             </v-card-actions>
-                        </v-stepper-content>
-                    </v-stepper>
+                        </v-stepper-content>&ndash;&gt;
+                    </v-stepper>-->
                 </v-card>
 </template>
 
@@ -263,10 +267,18 @@
 
 import {formatter} from '@/mixin/formatter'
 import axios from "axios";
+import vueStep from 'vue-step'
 
 export default {
         data() {
             return {
+                nowStep: 2,
+                stepList: [
+                    'First Step',
+                    'Second Step',
+                    'Third Step',
+                    'Four Step'
+                ],
                 ads:[],
                 comment:'',
                 e1:0,

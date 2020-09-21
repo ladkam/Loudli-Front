@@ -475,7 +475,7 @@ import Cats from '@/static/Cats.json'
             },
             defaultImage() {
                 if (_.isEmpty(this.feed)) {
-                    return require('../../../assets/default_podcast.jpg')
+                    return require('../../../assets/default_podcast.png')
                 } else {
                     return this.podcast.image
 /*

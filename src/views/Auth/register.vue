@@ -1,36 +1,51 @@
 <template>
-    <v-app style="background-color: #FAFAFA" >
-        <v-content>
+        <v-card outlined style="width: 1000px" class="mx-auto mt-12">
+            <div class="h2 text-center mt-2">
+                Rejoignez Loudli !
+            </div>
+            <v-card-subtitle class="text-center mt-2">
+                La platforme qui monétise l'audiance des podcasts
+            </v-card-subtitle>
 
-        <v-card v-if="step==1" width="400" class="mx-auto mt-2" flat outlined>
-            <v-tabs
-                    v-model="tab"
-                    background-color="transparent"
-                    color="basil"
-                    grow
-            >
+            <v-stepper v-model="step" class="elevation-0 mt-2">
 
-                <v-tab
-                        v-for="item in ['Podcaster','Announceur']"
-                        :key="item"
-                >
-                    {{ item }}
-                </v-tab>
-                </v-tabs>
-            <v-form>
+                <v-stepper-header class="elevation-0">
+                    <v-stepper-step  step="1">
+                        Informations personnelles
+                    </v-stepper-step>
 
-                <v-container>
-                    <v-row justify="center">
-                <v-card-title>
-                    <h1 class="mt-2">S'inscrire</h1>
-                </v-card-title>
+                    <v-divider></v-divider>
+
+                    <v-stepper-step  step="2">
+                        Coordonnée
+                    </v-stepper-step>
+                    <v-divider></v-divider>
+
+                    <v-stepper-step  step="3">
+                        Avatar
+                    </v-stepper-step>
+                </v-stepper-header>
+
+                <v-card class="mt-2 mx-auto"  flat>
+                <v-stepper-content step="1" style="border: none;elevation: 0">
+
+                    <h2 class="ml-3 mb-6 mt-0">
+                        Identification
+                    </h2>
+
+                    <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+                    <v-col>
+                            <v-select
+                                    prepend-icon="mdi-account"
+                                    v-model="formData.type"
+                                    :items="['podcaster','announcer']"
+                                    label="Type de compte"
+                                    class="mb-0 pb-0 mx-0 px-0"
+                                    outlined
+                            ></v-select>
+                    </v-col>
                     </v-row>
-                    <v-row justify="center">
-                        <v-avatar  size="150" outlined>
-                            <v-img src="@/static/podcast-icon-19.jpg"></v-img>
-                        </v-avatar>
-                    </v-row>
-                </v-container>
+
 
                     <v-alert
                             v-if="alert"
@@ -43,45 +58,70 @@
                         cette adresse email est déjà utilisée
                     </v-alert>
 
+                    <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+                    <v-col                                 class="mb-0 pb-0"
+                    >
+                        <v-text-field
+                                label="Prénom"
+                                prepend-icon="mdi-account"
+
+                                class="mb-0 pb-0"
+                                outlined
+                                :error-messages="nameErrors"
+                                type="text"
+                                v-model="formData.name"
+                        ></v-text-field>
+
+                    </v-col>
+
+                        <v-col                                 class="mb-0 pb-0"
+                        >
+
+                            <v-text-field
+                                    label="Nom"
+                                    prepend-icon="mdi-account"
+                                    class="mb-0 pb-0"
+                                    outlined
+                                    required
+                                    :error-messages="surnameErrors"
+                                    type="surname"
+                                    v-model="formData.surname"
+                            ></v-text-field>
+
+
+                        </v-col>
+
+                    </v-row>
+
+                    <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+                        <v-col                                 class="mb-0 pb-0">
+                        <v-text-field
+                                outlined
+                                prepend-icon="mdi-email"
+                                label="Email"
+                                type="email"
+                                class="mb-0 pb-0"
+                                :error-messages="emailErrors"
+                                @input="$v.formData.email.$touch()"
+                                @blur="$v.formData.email.$touch()"
+                                required
+                                v-model="formData.email"
+                        >
+
+                        </v-text-field>
+                            </v-col>
+                    </v-row>
+
+                    <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+
+
+                        <v-col>
                     <v-text-field
-                            label="Adresse mail"
+                            label="Mot de passe"
                             outlined
-                            type="email"
-                            class="mr-6 ml-6"
-                            :error-messages="emailErrors"
-                            @input="$v.formData.email.$touch()"
-                            @blur="$v.formData.email.$touch()"
-                            required
-                            v-model="formData.email"
-                    ></v-text-field>
-                    <v-text-field
-                            label="Prénom"
-                            outlined
-                            class="mr-6 ml-6"
-                            :error-messages="nameErrors"
-                            type="text"
-                            v-model="formData.name"
-                    ></v-text-field>
-                    <v-text-field
-                            label="Nom"
-                            outlined
-                            class="mr-6 ml-6"
-                            :error-messages="surnameErrors"
-                            type="surname"
-                            v-model="formData.surname"
-                    ></v-text-field>
-                    <v-text-field
-                            label="Compagnie"
-                            outlined
-                            class="mr-6 ml-6"
-                            type="Compagnie"
-                            v-model="formData.Compagnie"
-                    ></v-text-field>
-                    <v-text-field
-                            label="mot de passe"
-                            outlined
-                            class="mr-6 ml-6"
                             :error-messages="passwordErrors"
+                            prepend-icon="mdi-lock"
+
                             :type="showPassword ? 'text' : 'password'"
                             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="showPassword = !showPassword"
@@ -90,10 +130,16 @@
                             @blur="$v.formData.password.$touch()"
                     ></v-text-field>
 
-                    <v-text-field
-                            label=" confirmer le mot de passe"
+                        </v-col>
+
+                        <v-col>
+
+
+                        <v-text-field
+                            label=" Confirmer le mot de passe"
+                            prepend-icon="mdi-lock"
+
                             outlined
-                            class="mr-6 ml-6 mb-0 pb-0"
                             :type="showPasswordConfirm ? 'text' : 'password'"
                             :append-icon="showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
                             @click:append="showPasswordConfirm = !showPasswordConfirm"
@@ -103,34 +149,135 @@
                             @blur="$v.formData.confirmPassword.$touch()"
                     ></v-text-field>
 
-                <v-row class="pa-0 ma-0" style="border-style: none">
-                    <v-btn color="success" :disabled="$v.$invalid" @click="step=2" class="mx-auto pt-0 mt-0 mb-2" width="350"  style="border-style: none"> suivant </v-btn>
-                </v-row>
+                        </v-col>
 
-            </v-form>
-        </v-card>
+                    </v-row>
 
-            <v-card
-                    style="width:50vh;height:50vh"
-                    v-else
-                    class="mx-auto mt-2"
-                    flat
-                    outlined>
-                <app-ImagePreview
-                        v-on:childToParent="setPicture"
-                        :defaultImage="defaultImage">
-                </app-ImagePreview>                <v-row class="pa-0 ma-0" style="border-style: none">
-                    <v-btn color="success" :disabled="$v.$invalid" @click="SignUp" class="mx-auto pt-0 mt-0 mb-2" width="350"  style="border-style: none"> m'enregistrer </v-btn>
-                </v-row>
-                <span>{{this.formData.profilePicture}}</span>
-            </v-card>
-            </v-content>
-    </v-app>
+                    <v-card-actions class="align-end justify-end">
+                        <v-btn color="teal" elevation="0" :disabled="$v.$invalid || !formData.type" @click="step=2" class="pt-0 mt-0"  > Suivant <v-icon left>fa-arrow-right</v-icon></v-btn>
+                    </v-card-actions>
+
+                </v-stepper-content>
+
+                    <v-stepper-content step="2">
+
+                        <h2 class="ml-3 mb-5">
+                            Coordonnées
+                        </h2>
+
+
+
+                        <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+
+                            <v-col>
+
+                        <v-text-field
+                    label="Compagnie (optionnel)"
+                    prepend-icon="fa-building"
+                    outlined
+                    type="Compagnie"
+                    v-model="formData.Compagnie"
+            ></v-text-field>
+
+                            </v-col>
+                            <v-col>
+
+
+        <v-text-field
+                label="Téléphone (optionnel)"
+                prepend-icon="mdi-phone"
+
+                outlined
+                v-model="formData.phone"
+        ></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+
+                            <v-col>
+
+
+                                <v-text-field
+                                        prepend-icon="mdi-map"
+                                        label="Adresse (optionnel)"
+                                        outlined
+                                        v-model="formData.street"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                            <v-row class="justify-space-around align-center pa-0 ma-0" style="border-style: none" >
+
+<v-col>
+
+                            <v-text-field
+                label=" Ville (optionnel)"
+                prepend-icon="mdi-city"
+
+                outlined
+                v-model="formData.city"
+        ></v-text-field>
+                                </v-col>
+                                <v-col>
+
+
+
+                                <v-text-field
+                                        prepend-icon="mdi-earth"
+
+                                        label="Pays (optionnel)"
+                outlined
+                v-model="formData.country"
+        ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                        <v-card-actions class="align-end justify-end">
+                            <v-btn color="teal" elevation="0"  @click="step=step-1" class="pt-0 mt-0" text > retour <v-icon right>fa-register</v-icon></v-btn>
+                            <v-btn color="teal" elevation="0"  @click="step=3" class="pt-0 mt-0"  > Suivant <v-icon left>fa-arrow-right</v-icon></v-btn>
+                        </v-card-actions>
+
+                    </v-stepper-content>
+
+                    <v-stepper-content step="3">
+
+                        <v-row justify="center" class="mt-0 pt-0">
+
+                            <div>
+                                <app-ImagePreview
+                                        v-on:childToParent="setPicture"
+                                        :defaultImage="defaultImage">
+                                </app-ImagePreview>
+                            </div>
+
+                        </v-row>
+
+
+                        <v-card-actions class="align-end justify-end">
+                            <v-btn color="teal" elevation="0"  @click="step=step-1" class="pt-0 mt-0" text > retour <v-icon right>fa-register</v-icon></v-btn>
+                            <v-btn color="teal" elevation="0" :disabled="enableRegistration" @click="signUp" class="pt-0 mt-0"> m'enregistrer  <v-icon right>mdi-account</v-icon></v-btn>
+                        </v-card-actions>
+
+                    </v-stepper-content>
+
+
+                </v-card>
+
+        </v-stepper>
+        </v-card >
+
+
+
+
 </template>
 
 <script>
     import { required, email, sameAs, minLength } from "vuelidate/lib/validators";
     import ImagePreview from "@/components/ImagePreview";
+/*
+    import _ from 'lodash';
+*/
     export default {
         data() {
             return {
@@ -140,6 +287,11 @@
                 showPassword: false,
                 showPasswordConfirm: false,
                 formData: {
+                    phone:"",
+                    type:"",
+                    street:"",
+                    city:"",
+                    country:"",
                     email: "",
                     password: "",
                     name: "",
@@ -170,6 +322,9 @@
             }
         },
         computed: {
+            enableRegistration() {
+                return !(this.formData.profilePicture.size>0)
+            },
             type() {
                 let types = ['podcaster', 'announcer']
                 return types[this.tab]
@@ -216,20 +371,24 @@
                 return errors;
             },
             defaultImage() {
-                return require('@/assets/default_podcast.jpg')
+                return require('@/assets/default_podcast.png')
             },
         },
         components:{
             'app-ImagePreview':ImagePreview},
         methods: {
-            async  SignUp() {
+            async  signUp() {
                 console.log(this.formData.profilePicture)
                 let payload = this.formData
-                payload['type']=this.type
                 let response = await this.$store.dispatch('register',payload)
                 if(response=='registration ok'){
                     this.$store.dispatch('logout')
                     this.$router.push('/login/')
+                }
+                else
+                {
+                    this.step=1
+                    this.alert=true
                 }
             },
             setPicture(picture){
